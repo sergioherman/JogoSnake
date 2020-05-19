@@ -1,14 +1,16 @@
 <!--
-delay no gameover quando a cobra está muito grande???
-permitir pausar
-criar botão reset
-permitir que o jogador configure cor, tamanho do quadro, timeout, maçã longe da borda
-melhorar a aparência da tabela
-setar nivel facil onde maçã nao aparece perto das bordas e o timeout fica mais longo
-melhorar a tela de game over
-dividir gomo em gomox e gomoy
-fazer tela de ganhou se a cobra preencher tudo
-fazer telas de niveis quando a cobra ficar grande-->
+1. Criar controle para celular
+2. Permitir pausar
+3. Criar botão reset
+4. Permitir que o jogador configure cor, tamanho do quadro, timeout, maçã longe da borda
+5. Permitir usuário mudar a aparência da tabela
+6. Setar nivel facil onde maçã nao aparece perto das bordas e o timeout fica mais longo
+7. Dividir gomo em gomox e gomoy (nao deve melhorar muito a princípio)
+8. Fazer tela de ganhou se a cobra preencher tudo
+9. Fazer telas de niveis quando a cobra ficar grande
+
+10. BUG - delay no gameover quando a cobra está muito grande??? (Tentar mudar a estruturação do código)
+-->
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -19,12 +21,43 @@ fazer telas de niveis quando a cobra ficar grande-->
 </head>
 <body onKeyDown="pegadir(event.keyCode);">
     <h1 id = 'tit'>Snake</h1>
+    <div id = 'tamanhocobra'>Tamanho: </div>
     <hr>
     <div id = 'gameover'></div>
     <div id = 'quadro'></div>
-    <div id = 'tamanhocobra'>Tamanho: </div>
+    <div id = 'botoes'>
+        <!-- melhorar chamando uma única função e colocando um parâmetro dentro -->
+        <input id = 'bcima' type="button" value="^" onclick="dircima()">
+        <input id = 'bdir' type="button" value='>' onclick="dirdir()">
+        <input id = 'besq' type="button" value='<' onclick="diresq()">
+        <input id = 'bbaixo' type="button" value="!" onclick="dirbaixo()">
+    </div>
     <div id = 'res2'></div>
     <style>
+        #bcima{
+            position: absolute;
+            left: 80%;
+            top: 70%;
+            padding: 20px;
+        }
+        #bbaixo{
+            position: absolute;
+            left: 80%;
+            top: 90%;
+            padding: 20px;
+        }
+        #bdir{
+            position: absolute;
+            left: 90%;
+            top: 80%;
+            padding: 20px;
+        }
+        #besq{
+            position: absolute;
+            left: 70%;
+            top: 80%;
+            padding: 20px;
+        }
         body{
             /* background-color: teal; */
         }
@@ -200,7 +233,15 @@ fazer telas de niveis quando a cobra ficar grande-->
             if (tecla == 38 && estavaindopara != 'baixo') {direcao = 'cima'}
             if (tecla == 39 && estavaindopara != 'esq') {direcao = 'dir'}
             if (tecla == 40 && estavaindopara != 'cima') {direcao = 'baixo'}
+            if (tecla == 32) {}
         }
+
+        // DIMINUIR O NÚMERO DE FUNÇÕES TENTANDO COLOCAR UM PARÂMETRO DE ENTRADA LÁ NO HTML
+        function dircima(){direcao = 'cima'}
+        function diresq(){direcao = 'esq'}
+        function dirdir(){direcao = 'dir'}
+        function dirbaixo(){direcao = 'baixo'}
+
     </script>
 </body>
 </html>
