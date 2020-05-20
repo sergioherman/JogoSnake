@@ -1,13 +1,14 @@
 <!--
+*** Permitir que o jogador configure cor, timeout, maçã longe da borda
+*** Setar nivel facil onde maçã nao aparece perto das bordas e o timeout fica mais longo
+*** o código ficou muito pesado, tem que enxugar.
+* acelerar a cobra quando espaço estiver apertado e frear quando soltar
 * setar padding dos quadrados de acordo com o tamanho da tela (pegar informação do tamanho da tela)
-4. Permitir que o jogador configure cor, timeout, maçã longe da borda
-6. Setar nivel facil onde maçã nao aparece perto das bordas e o timeout fica mais longo
-
-* acelerar a cobra quando espaço estiver apertado
 * Fazer tela de ganhou se a cobra preencher tudo
 * Congrat niveis quando a cobra atingir tamanho = tamx ou tamy (o que for maior)
 * BUG - delay no gameover quando a cobra está muito grande??? (Tentar mudar a estruturação do código)
-* Dividir gomo em gomox e gomoy (nao deve melhorar muito a princípio)-->
+* Dividir gomo em gomox e gomoy (nao deve melhorar muito a princípio)
+-->
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -23,45 +24,68 @@
     <div id = 'quadro'></div>
     <input id = 'tamanhocobra' type="text"></input>
     <div id = 'botoes'>
-        <!-- melhorar chamando uma única função e colocando um parâmetro dentro -->
         <input class = 'bcel' id = 'bcima' type="button" value='&#9650;' onclick="dircima()">
         <input class = 'bcel' id = 'bdir' type="button" value='&#9658;' onclick="dirdir()">
         <input class = 'bcel' id = 'besq' type="button" value='&#9668;' onclick="diresq()">
         <input class = 'bcel' id = 'bbaixo' type="button" value='&#9660;' onclick="dirbaixo()">
-        <input class = 'bcel' id = 'bpause' type="button" value='Pause (P)' onclick="bpause()">
+        <input class = 'bmid' id = 'bpause' type="button" value='Pause (P)' onclick="bpause()">
         <!-- <input class = 'bconfig' id = 'baplicar' type="button" value='Aplicar' onclick="aplicar()"> -->
-        <input class = 'bconfig' id = 'brestart' type="button" value='Restart (R)' onclick="restart()">
-
+        <input class = 'bmid' id = 'bacelera' type="button" value= 'Acelerar (X)' onmousedown="acelera()">
+        <input class = 'bmid' id = 'bfrear' type="button" value= 'Frear (Z)' onmousedown="frear()">
+        
+        <input class = 'bmid' id = 'brestart' type="button" value='Restart (R)' onclick="restart()">
         <div id = 'dbtam'>
-            <input type="range" class='brange' id='btamx' value='10' oninput="aplicar()" max="50" min='5'>
-            <input type="range" class='brange' id='btamy' value='10' oninput="aplicar()" max="30" min='5'>
+            <p>Tamamho</p>
+            <input type="range" class='brange' id='btamx' value='12' oninput="aplicar()" max="50" min='5'>
+            <input type="range" class='brange' id='btamy' value='12' oninput="aplicar()" max="30" min='5'>
+        </div>
+        <div id = 'dbtempo'>
+            <p>Velocidade</p>
+            <input type="range" class='brange' id='btempo' value='200' oninput="aplicar()" max="300" min='50'>
         </div>
     </div>
     <div id = 'res2'></div>
-    <div id = 'res3'></div>
+    <!-- <div id = 'res3'></div> -->
     <style>
+        #dbtempo{
+            position: absolute;
+            bottom: 300px;
+            left: 20px;
+        }
+        #btempo{
+            width: 80px;
+            transform: rotate(180deg);
+        }
+        #dbtempo p{
+            text-align: center;
+            font-weight: 600;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        #dbtam p{
+            text-align: center;
+            font-weight: 600;
+            font-family: 'Courier New', Courier, monospace;
+            margin: -5px 0px 20px 0px;
+        }
         .brange{
             height: 20px;
-            width: 40px;
+            
             border: solid;
             padding: 0px;
             box-shadow: 0px 0px 2px black;
-            
-
         }
         #dbtam{
             border: solid rgba(0,0,0,0.4);
             padding: 15px 0px 15px 5px;
             position: absolute;
-            bottom: 20px;
+            bottom: 160px;
             left: 20px;
-            /* transform: translate(-130%,0); */
-            /*  */
+        }
+        #btamx{
+            width: 40px;
         }
         #btamy{
-            /* position: absolute;
-            top: 20%;
-            left: 15%; */
+            width: 40px;
             transform: rotate(90deg);
         }
         hr{
@@ -73,27 +97,29 @@
             width: 35x;
             height: 35px;
         }
-        #bpause{
+        .bmid{
             width: 130px;
             font-weight: 600;
             font-family: 'Courier New', Courier, monospace;
             font-size: 12pt;
+            height: 35px;
             position: absolute;
             top: 100%;
+            
+        }
+        #bpause{
             left: 50%;
-            height: 35px;
-            transform: translate(10%,-45px);
+            transform: translate(-170%,-45px);
         }
         #brestart{
-            width: 130px;
-            font-weight: 600;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 12pt;
-            position: absolute;
-            top: 100%;
             left: 50%;
-            height: 35px;
-            transform: translate(-110%,-45px);
+            transform: translate(-50%,-45px);
+        }
+        #bacelera{
+            transform: translate(10px,-145px);
+        }
+        #bfrear{
+            transform: translate(10px,-100px);
         }
         #bcima{
             position: absolute;
@@ -120,39 +146,32 @@
             transform: translate(-140px,-100px);
         }
         #tamanhocobra{
+            background-color: black;
+            color: white;
             border-radius: 5px;
             font-size: 15pt;
             text-align: center;
             font-family: 'Courier New', Courier, monospace;
-            width: 50px;
+            width: 80px;
             height: 25px;
             position: absolute;
             left: 100%;
             top: 5px;
-            transform: translate(-70px,0px);
-        }
-        body{
-            /* background-color: teal; */
+            transform: translate(-120px,0px);
         }
         #tit{
             text-align: center;
             height: fit-content;
-            /* border-bottom: solid; */
             font-size: 20pt;
             margin: 0px 0px 5px 0px;
         }
         #quadro{
             background-color: white;
             margin: auto;
-            /* padding-right: 15%; */
-            /* margin-top: 50px; */
             width: fit-content;
-            /* border-radius: 7px; */
-            /* border: solid rgba(0,0,0,0.8); */
         }
         #quadro h1{
             text-align: center;
-            /* margin-top: 100px; */
         }
         #tabela{
             margin: auto;
@@ -175,39 +194,23 @@
             color: rgba(0,0,0,0.65);
             font-size: 20pt;
             text-shadow: 7px 7px 2px rgba(255, 255, 255, 0.65);
-            /* padding-right: 20%; */
         }
-        /* .quadrinho{ */
-            /* background-color: aqua; */
-        /* } */
     </style>
     <script>
-        // var tamx = document.getElementById(btamx)
-        // var tamx = 10
-        
-        // var tamy = Number(document.getElementById(btamy).value) // setar de 5 a 50
         tamquad = 100 //setar de 90 a 200
         cor = 200 //setar de 190 a 220 -- quanto maior o número mais fraco fica o rabo
-
         tempoinicio = 1000
-        tempo = 200 // setar de 100 a 400
-        
+        // tempo = 200 // setar de 100 a 400
         
         aplicar()
-
-
         function aplicar(){
-            
             tamx = parseInt(document.getElementById('btamx').value)
             tamy = parseInt(document.getElementById('btamy').value)
-
             if (tamx >= tamy){tammai=tamx}
             if (tamx < tamy){tammai=tamy}
             tamq = parseInt(tamquad/tammai)
-            
             texto='<table id = "tabela">'
             for(let nx=1;nx<=tamy;nx++){
-                document.getElementById('res3').innerHTML=tamquad + '-' + tammai + '-' + tamq + '-' + tamx + '-' + tamy
                 texto+='<tr id = '+nx+'>'
                 for (let ny=1;ny<=tamx;ny++){
                     texto+='<td class="quadrinho" id = '+nx+'-'+ny+' name="quad" style="padding: '+tamq+'px;"><p>'+nx+'-'+ny+'</p></td>'
@@ -233,10 +236,9 @@
                 }
             }
             
-            gomo = [[2,1],[2,2],[2,3]] //defino a cobra inicial
+            gomo = [[2,1],[2,2],[2,3]] // Define a cobra inicial
             tamc=gomo.length
-            
-            //Desenha a cobra inicial no tabuleiro
+            // Desenha a cobra inicial no tabuleiro
             for(let nn=0; nn<tamc; nn++){
                 var preto = String(gomo[nn][0]) +'-'+ String(gomo[nn][1])
                     indp = 1-(nn/(tamc/*-1*/))
@@ -265,7 +267,8 @@
             comeu = false
             bateu = false
             
-            //evita chamada dupla da função anda com restarts consecutivos
+
+            // Evita chamada dupla da função anda com restarts consecutivos
             if (chamaanda == 0){
                 setTimeout(anda,tempoinicio)
                 chamaanda++
@@ -274,6 +277,8 @@
             var aa=0
 
             function anda () {
+
+
                 if (continua == true){
                     estavaindopara = direcao
                     tamc = gomo.length //pego o tamanho da cobra
@@ -346,7 +351,7 @@
                         }
                     }
 
-                    // Pinto o local da nova maçã de vermelho
+                    // Desenha o local da nova maçã de vermelho
                     var vermelho = String(maca[0]) +'-'+ String(maca[1])
                     document.getElementById(vermelho).style.background='red'
                     aa++
@@ -354,8 +359,14 @@
                 }else(
                     document.getElementById('gameover').innerHTML = '<h1 style="padding: 20px; box-shadow: 10px 10px 10px rgba(0,0,0,0.25);">Pause</h1>'
                 )
+                tempo = parseInt(document.getElementById('btempo').value)
+                // document.getElementById('res3').innerHTML=tempo
+                temponormal = tempo
+                tempoac = temponormal * 0.5
                 setTimeout(anda,tempo)
+                               
             }
+            
         }
         function pegadir(tecla){
             // alert(tecla)
@@ -368,6 +379,8 @@
                 else{continua = false}
             }
             if(tecla==82) {restart()}
+            if(tecla==88) {tempo = tempoac}
+            if(tecla==90) {tempo = temponormal}
         }
         function dircima(){ if (estavaindopara != 'baixo') {direcao = 'cima'}}
         function diresq(){ if (estavaindopara != 'dir') {direcao = 'esq'}}
@@ -377,7 +390,8 @@
             if (continua == false){continua=true}
                 else{continua = false}
         }
-        
+        function acelera(){tempo = tempoac}
+        function frear(){tempo = temponormal}
     </script>
 </body>
 </html>
