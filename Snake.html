@@ -5,12 +5,12 @@
 4. Permitir que o jogador configure cor, tamanho do quadro, timeout, maçã longe da borda
 5. Permitir usuário mudar a aparência da tabela
 6. Setar nivel facil onde maçã nao aparece perto das bordas e o timeout fica mais longo
-7. Dividir gomo em gomox e gomoy (nao deve melhorar muito a princípio)
-8. Fazer tela de ganhou se a cobra preencher tudo
-9. Fazer telas de niveis quando a cobra ficar grande
 
-10. BUG - delay no gameover quando a cobra está muito grande??? (Tentar mudar a estruturação do código)
--->
+* Fazer tela de ganhou se a cobra preencher tudo
+* Congrat niveis quando a cobra atingir tamanho = tamx ou tamy (o que for maior)
+
+* BUG - delay no gameover quando a cobra está muito grande??? (Tentar mudar a estruturação do código)
+* Dividir gomo em gomox e gomoy (nao deve melhorar muito a princípio)-->
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -21,60 +21,86 @@
 </head>
 <body onKeyDown="pegadir(event.keyCode);">
     <h1 id = 'tit'>Snake</h1>
-    <div id = 'tamanhocobra'>Tamanho: </div>
     <hr>
     <div id = 'gameover'></div>
     <div id = 'quadro'></div>
+    <input id = 'tamanhocobra' type="text"></input>
     <div id = 'botoes'>
         <!-- melhorar chamando uma única função e colocando um parâmetro dentro -->
-        <input id = 'bcima' type="button" value="^" onclick="dircima()">
-        <input id = 'bdir' type="button" value='>' onclick="dirdir()">
-        <input id = 'besq' type="button" value='<' onclick="diresq()">
-        <input id = 'bbaixo' type="button" value="!" onclick="dirbaixo()">
+        <input class = 'bcel' id = 'bcima' type="button" value='&#9650;' onclick="dircima()">
+        <input class = 'bcel' id = 'bdir' type="button" value='&#9658;' onclick="dirdir()">
+        <input class = 'bcel' id = 'besq' type="button" value='&#9668;' onclick="diresq()">
+        <input class = 'bcel' id = 'bbaixo' type="button" value='&#9660;' onclick="dirbaixo()">
     </div>
     <div id = 'res2'></div>
     <style>
+        hr{
+            margin: 5px;
+        }
+        .bcel{
+            font-size: 15pt;
+            text-align: center;
+            width: 35x;
+            height: 35px;
+        }
         #bcima{
             position: absolute;
-            left: 80%;
-            top: 70%;
-            padding: 20px;
+            left: 100%;
+            top: 100%;
+            transform: translate(-100px,-140px);
         }
         #bbaixo{
             position: absolute;
-            left: 80%;
-            top: 90%;
-            padding: 20px;
+            left: 100%;
+            top: 100%;
+            transform: translate(-100px, -60px);
         }
         #bdir{
             position: absolute;
-            left: 90%;
-            top: 80%;
-            padding: 20px;
+            left: 100%;
+            top: 100%;
+            transform: translate(-60px,-100px);
         }
         #besq{
             position: absolute;
-            left: 70%;
-            top: 80%;
-            padding: 20px;
+            left: 100%;
+            top: 100%;
+            transform: translate(-140px,-100px);
+        }
+        #tamanhocobra{
+            border-radius: 5px;
+            font-size: 15pt;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+            width: 50px;
+            height: 25px;
+            position: absolute;
+            left: 100%;
+            top: 5px;
+            transform: translate(-70px,0px);
         }
         body{
             /* background-color: teal; */
         }
         #tit{
             text-align: center;
+            height: fit-content;
+            /* border-bottom: solid; */
+            font-size: 20pt;
+            margin: 0px 0px 5px 0px;
         }
         #quadro{
             background-color: white;
             margin: auto;
-            margin-top: 50px;
+            padding-right: 15%;
+            /* margin-top: 50px; */
             width: fit-content;
-            border-radius: 7px;
+            /* border-radius: 7px; */
             /* border: solid rgba(0,0,0,0.8); */
         }
         #quadro h1{
             text-align: center;
-            margin-top: 100px;
+            /* margin-top: 100px; */
         }
         #tabela{
             margin: auto;
@@ -83,13 +109,10 @@
             border: solid;
             border-color: rgba(0,0,0,0.2);
             border-radius: 7px;
-            padding: 12px;
+            
         }
         td apagar {
             display: none;
-        }
-        tr{
-            box-shadow: 2,2,2,black;
         }
         #gameover{
             width: fit-content;
@@ -100,23 +123,28 @@
             color: rgba(0,0,0,0.65);
             font-size: 20pt;
             text-shadow: 7px 7px 2px rgba(255, 255, 255, 0.65);
+            padding-right: 20%;
         }
     </style>
     <script>
         var tamx = 10
-        var tamy = 10
+        var tamy = 10 // setar de 5 a 50
+        tamquad = 100 //setar de 90 a 200
+        if (tamx<tamy){var tammen=tamx}
+        else{tammen=tamy}
+        tamq = parseInt(tamquad/tammen)
         texto='<table id = "tabela">'
         for(let nx=1;nx<=tamy;nx++){
             texto+='<tr id = '+nx+'>'
             for (let ny=1;ny<=tamx;ny++){
-                texto+='<td id = '+nx+'-'+ny+'><apagar>'+nx+'-'+ny+'</apagar></td>'
+                texto+='<td id = '+nx+'-'+ny+' style="padding: '+tamq+'px;><apagar>"'+nx+'-'+ny+'</apagar></td>'
             }
             texto+='</tr>'
         }
         texto+='</table>'
         document.getElementById('quadro').innerHTML=texto
 
-        cor = 200 //quanto maior o número mais fraco fica o rabo
+        cor = 200 //setar de 190 a 220 -- quanto maior o número mais fraco fica o rabo
         gomo = [[2,1],[2,2],[2,3]] //defino a cobra inicial
         tamc=gomo.length
 
@@ -134,7 +162,7 @@
         mudadenovo = true
         while (mudadenovo){
             mudadenovo = false
-            for (let mm = 1; mm < tamc; mm++){
+            for (let mm = 0; mm < tamc; mm++){
                 if (String(gomo[mm]) == String(maca)){
                     maca = [parseInt(1+(tamy*Math.random())),parseInt(1+(tamx*Math.random()))]
                     mudadenovo = true
@@ -146,82 +174,97 @@
 
         direcao = 'dir'
         tempoinicio = 1000
-        tempo = 200
+        tempo = 200 // setar de 100 a 400
         comeu = false
         bateu = false
         setTimeout(anda,tempoinicio)
+        var continua = true
+
+        var aa=0
 
         function anda () {
-            estavaindopara = direcao
-            tamc = gomo.length //pego o tamanho da cobra
-            document.getElementById('tamanhocobra').innerText='Tamanho: '+tamc
+            if (continua == true){
+                estavaindopara = direcao
+                tamc = gomo.length //pego o tamanho da cobra
+                document.getElementById('tamanhocobra').value=tamc
 
-            // if (comeu == false) {
-            var branco = String(gomo[0][0]) +'-'+ String(gomo[0][1]) // atualizo o gomo do rabo a ser apagado
-            // }
-            // else{var branco = '1'}
-            if (comeu == false) {
-                for(let nn = 0; nn < tamc-1; nn++){ //faço os gomos do corpo pular pra cabeça
-                    gomo[nn]=gomo[nn+1]
-                }
-            }
+                // if (comeu == false) {
+                var branco = String(gomo[0][0]) +'-'+ String(gomo[0][1]) // atualizo o gomo do rabo a ser apagado
+                // }
+                // else{var branco = '1'}
             
-            // Define as coordenadas do gomo da cabeça da cobra
-            if (direcao == 'esq') {gomo[tamc-1]=[gomo[tamc-1][0],gomo[tamc-1][1]-1]}
-            if (direcao == 'cima') {gomo[tamc-1]=[gomo[tamc-1][0]-1,gomo[tamc-1][1]]}
-            if (direcao == 'dir') {gomo[tamc-1]=[gomo[tamc-1][0],gomo[tamc-1][1]+1]}
-            if (direcao == 'baixo') {gomo[tamc-1]=[gomo[tamc-1][0]+1,gomo[tamc-1][1]]}
 
-            // Verifica se a cobra bateu na nela mesma
-            tamgomo = gomo.length
-            for (let mm = 1; mm < tamgomo; mm++){
-                if (String(gomo[mm]) == String(gomo[0])){
+                if (comeu == false) {
+                    for(let nn = 0; nn < tamc-1; nn++){ //faço os gomos do corpo pular pra cabeça
+                        gomo[nn]=gomo[nn+1]
+                    }
+                }
+            
+                // Define as coordenadas do gomo da cabeça da cobra
+                if (direcao == 'esq') {gomo[tamc-1]=[gomo[tamc-1][0],gomo[tamc-1][1]-1]}
+                if (direcao == 'cima') {gomo[tamc-1]=[gomo[tamc-1][0]-1,gomo[tamc-1][1]]}
+                if (direcao == 'dir') {gomo[tamc-1]=[gomo[tamc-1][0],gomo[tamc-1][1]+1]}
+                if (direcao == 'baixo') {gomo[tamc-1]=[gomo[tamc-1][0]+1,gomo[tamc-1][1]]}
+            
+                // Verifica se a cobra bateu na nela mesma
+                tamgomo = gomo.length
+                for (let mm = 1; mm < tamgomo; mm++){
+                    if (String(gomo[mm]) == String(gomo[0])){
+                        bateu = true
+                    }
+                }
+                // Verifica se a cobra bateu na parede
+                if (gomo[tamc-1][1]>tamx || gomo[tamc-1][1]<1 || gomo[tamc-1][0]>tamy || gomo[tamc-1][0]<1) { 
                     bateu = true
                 }
-            }
-            // Verifica se a cobra bateu na parede
-            if (gomo[tamc-1][1]>tamx || gomo[tamc-1][1]<1 || gomo[tamc-1][0]>tamy || gomo[tamc-1][0]<1) { 
-                bateu = true
-            }
 
-            if (bateu == true){
-                // Exibe Game Over e para a função
-                document.getElementById('gameover').innerHTML = '<h1 style="padding: 20px; box-shadow: 10px 10px 10px rgba(0,0,0,0.25);">Game Over</h1>'
-                anda(stop)
-            } else{
-                // Muda a cor dos gomos da tabela e a cobra aparece no novo local
-                document.getElementById(branco).style.background='white'
-                for(let nn=0; nn<tamc; nn++){
-                    var preto = String(gomo[nn][0]) +'-'+ String(gomo[nn][1])
-                    indp = 1-(nn/(tamc/*-1*/))
-                    indn = nn/(tamc/*-1*/)
-                    document.getElementById(preto).style.background= 'rgb('+cor*indn+','+cor*indn+','+cor*indn+')'
+                if (bateu == true){
+                    // Exibe Game Over e para a função
+                    document.getElementById('gameover').innerHTML = '<h1 style="padding: 20px; box-shadow: 10px 10px 10px rgba(0,0,0,0.25);">Game Over</h1>'
+                    anda(stop)
+                } else{
+                    // Apaga o Pause se houver
+                    document.getElementById('gameover').innerHTML = ''
+                    
+                    // Muda a cor dos gomos da tabela e a cobra aparece no novo local
+                    document.getElementById(branco).style.background='white'
+                    for(let nn=0; nn<tamc; nn++){
+                        var preto = String(gomo[nn][0]) +'-'+ String(gomo[nn][1])
+                        indp = 1-(nn/(tamc/*-1*/))
+                        indn = nn/(tamc/*-1*/)
+                        document.getElementById(preto).style.background= 'rgb('+cor*indn+','+cor*indn+','+cor*indn+')'
+                    }
                 }
-            }
-
-            // Verifica se a cobra pegou a maçã
-            comeu = false
-            if (gomo[tamc-1] == String(maca)) {
-                comeu = true // Importante dizer que comeu pros gomos nao pularem no prox passo
-                gomo.push(gomo[tamc-1]) //aumento o tamanho do vetor cobra
-                maca = [parseInt(1+(tamy*Math.random())),parseInt(1+(tamx*Math.random()))]
-                // Verifica se a maçã apareceu em cima da cobra
-                tamc = gomo.length
-                mudadenovo = true
-                while (mudadenovo){
-                    mudadenovo = false
-                    for (let mm = 1; mm < tamc; mm++){
-                        if (String(gomo[mm]) == String(maca)){
-                            maca = [parseInt(1+(tamy*Math.random())),parseInt(1+(tamx*Math.random()))]
-                            mudadenovo = true
+                
+                // Verifica se a cobra pegou a maçã
+                comeu = false
+                if (gomo[tamc-1] == String(maca)) {
+                    comeu = true // Importante dizer que comeu pros gomos nao pularem no prox passo
+                    gomo.push(gomo[tamc-1]) //aumento o tamanho do vetor cobra
+                    maca = [parseInt(1+(tamy*Math.random())),parseInt(1+(tamx*Math.random()))]
+                    // Verifica se a maçã apareceu em cima da cobra
+                    tamc = gomo.length
+                    mudadenovo = true
+                    while (mudadenovo){
+                        mudadenovo = false
+                        for (let mm = 0; mm < tamc; mm++){
+                            if (String(gomo[mm]) == String(maca)){
+                                maca = [parseInt(1+(tamy*Math.random())),parseInt(1+(tamx*Math.random()))]
+                                mudadenovo = true
+                            }
                         }
                     }
                 }
-            }
 
-            // Pinto o local da nova maçã de vermelho
-            var vermelho = String(maca[0]) +'-'+ String(maca[1])
-            document.getElementById(vermelho).style.background='red'
+                // Pinto o local da nova maçã de vermelho
+                var vermelho = String(maca[0]) +'-'+ String(maca[1])
+                document.getElementById(vermelho).style.background='red'
+                
+                aa++
+                document.getElementById('res2').innerHTML=aa
+            }else(
+                document.getElementById('gameover').innerHTML = '<h1 style="padding: 20px; box-shadow: 10px 10px 10px rgba(0,0,0,0.25);">Pause</h1>'
+            )
 
             setTimeout(anda,tempo)
         }
@@ -233,7 +276,10 @@
             if (tecla == 38 && estavaindopara != 'baixo') {direcao = 'cima'}
             if (tecla == 39 && estavaindopara != 'esq') {direcao = 'dir'}
             if (tecla == 40 && estavaindopara != 'cima') {direcao = 'baixo'}
-            if (tecla == 32) {}
+            if (tecla == 32){
+                if (continua == false){continua=true}
+                else{continua = false}
+            }
         }
 
         // DIMINUIR O NÚMERO DE FUNÇÕES TENTANDO COLOCAR UM PARÂMETRO DE ENTRADA LÁ NO HTML
