@@ -1,6 +1,5 @@
 <!--
-*** Permitir que o jogador configure cor, timeout, maçã longe da borda
-*** Setar nivel facil onde maçã nao aparece perto das bordas e o timeout fica mais longo
+*** Permitir que o jogador configure cor e maçã longe da borda
 *** o código ficou muito pesado, tem que enxugar.
 * acelerar a cobra quando espaço estiver apertado e frear quando soltar
 * setar padding dos quadrados de acordo com o tamanho da tela (pegar informação do tamanho da tela)
@@ -39,19 +38,37 @@
             <input type="range" class='brange' id='btamx' value='12' oninput="aplicar()" max="50" min='5'>
             <input type="range" class='brange' id='btamy' value='12' oninput="aplicar()" max="30" min='5'>
         </div>
+        <div id = 'pass'>Passo: </div>
         <div id = 'dbtempo'>
             <p>Velocidade</p>
             <input type="range" class='brange' id='btempo' value='200' oninput="aplicar()" max="300" min='50'>
+            <div id = 'vel'></div>
         </div>
     </div>
-    <div id = 'res2'></div>
-    <div id = 'res3'></div>
-    <div id = 'res4'></div>
+    <!-- <div id = 'res5'>oi</div> -->
+    <!-- <div id = 'res7'></div> -->
+
     <style>
+         #res5{
+            position: absolute;
+            top: 50%;
+            right: 50px;
+            background-color: rgb(147, 197, 147);
+            padding: 10px;
+        } 
+        #pass{
+            border: solid rgba(0,0,0,0.4);
+            width: 110px;
+            position: absolute;
+            left: 20px;
+            top: 80px;
+        }
         #dbtempo{
+            border: solid rgba(0,0,0,0.4);
             position: absolute;
             bottom: 300px;
             left: 20px;
+            padding: 7px;
         }
         #btempo{
             width: 80px;
@@ -70,7 +87,6 @@
         }
         .brange{
             height: 20px;
-            
             border: solid;
             padding: 0px;
             box-shadow: 0px 0px 2px black;
@@ -198,6 +214,8 @@
         }
     </style>
     <script>
+        
+        // document.getElementById('res5')= 'oii'
         tamquad = 100 //setar de 90 a 200
         cor = 200 //setar de 190 a 220 -- quanto maior o número mais fraco fica o rabo
         tempoinicio = 1000
@@ -210,8 +228,8 @@
             temporang = parseInt(document.getElementById('btempo').value)
             tempoac = temporang * 0.5
             tempo = temporang
-            document.getElementById('res3').innerHTML=tempo
             
+            document.getElementById('vel').innerHTML= parseInt(300-tempo)/100
             tamx = parseInt(document.getElementById('btamx').value)
             tamy = parseInt(document.getElementById('btamy').value)
             if (tamx >= tamy){tammai=tamx}
@@ -228,6 +246,7 @@
             texto+='</table>'
             document.getElementById('quadro').innerHTML=texto
             // chamaanda = 0
+            restart() //seria bom se nao reiniciasse ao mexer no tamanho da tela, mas estavadando um bug em que a função anda nao era chamada por ninguem ao restartar e mexer no tamanho da tela
         }
 
         var continua = true
@@ -244,6 +263,7 @@
             temporang = parseInt(document.getElementById('btempo').value)
             tempoac = temporang * 0.5
             tempo = temporang
+            
             // Apaga o Gameover se houver
             document.getElementById('gameover').innerHTML = ''
             // Apaga a cobra anterior do tabuleiro de branco
@@ -283,22 +303,20 @@
 
             comeu = false
             bateu = false
-            
-
+            // algo = 'fora'
             // Evita chamada dupla da função anda com restarts consecutivos
             if (chamaanda == 0){
                 setTimeout(anda,tempoinicio)
+                // algo = 'dentro'
                 chamaanda++
             }
-            
-            
+            // window.document.getElementById('res5').innerHTML=algo   
             function anda () {
-                
-                // chamaanda = 0
-                
+                // window.document.getElementById('res5').innerHTML+= ' + anda'
+
+                // Algumas vezes ninguem chama a função anda quando se ajusta o tamanho da tela (roda a função aplicar) e restarta o jogo (roda a função restart)
+
                 if (continua == true){
-
-
                     estavaindopara = direcao
                     tamc = gomo.length //pego o tamanho da cobra
                     document.getElementById('tamanhocobra').value=tamc
@@ -322,8 +340,8 @@
                 
                     // Verifica se a cobra bateu na nela mesma
                     tamgomo = gomo.length
-                    for (let mm = 1; mm < tamgomo; mm++){
-                        if (String(gomo[mm]) == String(gomo[0])){
+                    for (let mm = 0; mm < (tamgomo-1); mm++){
+                        if (String(gomo[mm]) == String(gomo[(tamgomo-1)])){
                             bateu = true
                         }
                     }
@@ -338,7 +356,7 @@
                         
                     } else{
                         passo++
-                        document.getElementById('res4').innerText=passo
+                        document.getElementById('pass').innerText='Passo: '+passo
 
                         // Apaga o Pause se houver
                         document.getElementById('gameover').innerHTML = ''
@@ -372,19 +390,14 @@
                             }
                         }
                     }
-
                     // Desenha o local da nova maçã de vermelho
                     var vermelho = String(maca[0]) +'-'+ String(maca[1])
                     document.getElementById(vermelho).style.background='red'
-                    
-                        
                 }else{
                     document.getElementById('gameover').innerHTML = '<h1 style="padding: 20px; box-shadow: 10px 10px 10px rgba(0,0,0,0.25);">Pause</h1>'
                 }
-                setTimeout(anda,tempo)
-                               
+                setTimeout(anda,tempo)                  
             }
-            
         }
         function pegadir(tecla){
             // alert(tecla)
@@ -407,7 +420,7 @@
         function bpause(){
             if (continua == false){continua=true}
                 else{continua = false}
-        }
+            }
         function acelera(){tempo = tempoac}
         function frear(){tempo = temporang}
     </script>
