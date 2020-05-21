@@ -15,7 +15,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Snake</title>
 </head>
 <body onKeyDown="pegadir(event.keyCode);">
     <h1 id = 'tit'>Snake</h1>
@@ -45,7 +45,8 @@
         </div>
     </div>
     <div id = 'res2'></div>
-    <!-- <div id = 'res3'></div> -->
+    <div id = 'res3'></div>
+    <div id = 'res4'></div>
     <style>
         #dbtempo{
             position: absolute;
@@ -200,10 +201,17 @@
         tamquad = 100 //setar de 90 a 200
         cor = 200 //setar de 190 a 220 -- quanto maior o número mais fraco fica o rabo
         tempoinicio = 1000
+        var chamaanda = 0
         // tempo = 200 // setar de 100 a 400
         
         aplicar()
+        
         function aplicar(){
+            temporang = parseInt(document.getElementById('btempo').value)
+            tempoac = temporang * 0.5
+            tempo = temporang
+            document.getElementById('res3').innerHTML=tempo
+            
             tamx = parseInt(document.getElementById('btamx').value)
             tamy = parseInt(document.getElementById('btamy').value)
             if (tamx >= tamy){tammai=tamx}
@@ -219,14 +227,23 @@
             }
             texto+='</table>'
             document.getElementById('quadro').innerHTML=texto
-            chamaanda = 0
+            // chamaanda = 0
         }
 
         var continua = true
-        chamaanda = 0
+        
+        
         restart()
         
         function restart(){
+            
+            passo = 0
+
+            continua = true
+            // BUG - ESSA VARIÁVEL NAO ESTÁ ZERANDO!
+            temporang = parseInt(document.getElementById('btempo').value)
+            tempoac = temporang * 0.5
+            tempo = temporang
             // Apaga o Gameover se houver
             document.getElementById('gameover').innerHTML = ''
             // Apaga a cobra anterior do tabuleiro de branco
@@ -274,12 +291,14 @@
                 chamaanda++
             }
             
-            var aa=0
-
+            
             function anda () {
-
-
+                
+                // chamaanda = 0
+                
                 if (continua == true){
+
+
                     estavaindopara = direcao
                     tamc = gomo.length //pego o tamanho da cobra
                     document.getElementById('tamanhocobra').value=tamc
@@ -316,8 +335,11 @@
                     if (bateu == true){
                         // Exibe Game Over e para a função
                         document.getElementById('gameover').innerHTML = '<h1 style="padding: 20px; box-shadow: 10px 10px 10px rgba(0,0,0,0.25);">Game Over</h1>'
-                        anda(stop)
+                        
                     } else{
+                        passo++
+                        document.getElementById('res4').innerText=passo
+
                         // Apaga o Pause se houver
                         document.getElementById('gameover').innerHTML = ''
                         
@@ -354,15 +376,11 @@
                     // Desenha o local da nova maçã de vermelho
                     var vermelho = String(maca[0]) +'-'+ String(maca[1])
                     document.getElementById(vermelho).style.background='red'
-                    aa++
-                    document.getElementById('res2').innerHTML=aa
-                }else(
+                    
+                        
+                }else{
                     document.getElementById('gameover').innerHTML = '<h1 style="padding: 20px; box-shadow: 10px 10px 10px rgba(0,0,0,0.25);">Pause</h1>'
-                )
-                tempo = parseInt(document.getElementById('btempo').value)
-                // document.getElementById('res3').innerHTML=tempo
-                temponormal = tempo
-                tempoac = temponormal * 0.5
+                }
                 setTimeout(anda,tempo)
                                
             }
@@ -380,7 +398,7 @@
             }
             if(tecla==82) {restart()}
             if(tecla==88) {tempo = tempoac}
-            if(tecla==90) {tempo = temponormal}
+            if(tecla==90) {tempo = temporang}
         }
         function dircima(){ if (estavaindopara != 'baixo') {direcao = 'cima'}}
         function diresq(){ if (estavaindopara != 'dir') {direcao = 'esq'}}
@@ -391,7 +409,7 @@
                 else{continua = false}
         }
         function acelera(){tempo = tempoac}
-        function frear(){tempo = temponormal}
+        function frear(){tempo = temporang}
     </script>
 </body>
 </html>
