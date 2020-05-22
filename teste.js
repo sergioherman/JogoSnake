@@ -1,17 +1,43 @@
-soma = [0,0,0,0,0,0,0]
-for (let n = 0 ; n <10000 ; n++){
-    a = (parseInt(1+4*Math.random()))
-    switch(a){
-        case 0: soma[0] += 1
-        break
-        case 1: soma[1] += 1
-        break
-        case 2: soma[2] += 1
-        break
-        case 3: soma[3] += 1
-        break
-        case 4: soma[4] += 1
-        break
+// ii=0
+// anda()
+// function anda(){
+//     console.log('oi')
+//     var timeout1 = setTimeout(anda,1000)
+//     ii++
+//     n=[]
+//     n.push(1)
+//     console.log(ii)
+//     if (ii>3){
+//     clearTimeout(timeout1)
+//     }
+// }
+
+continua = true
+anda()
+function anda () {
+    var data = new Date();
+    var mmsinicio = data.getMilliseconds();
+    console.log(mmsinicio)
+
+    if (continua == false){
+        clearTimeout(timeout1)
+    }else{
+        var timeout1 = setTimeout(anda,1000)
     }
-}
-console.log(soma)
+        
+    var data = new Date();
+    var mmsfim = data.getMilliseconds();
+    document.getElementById('fim').value=mmsfim
+    if (bateu == false && continua == true) {
+        if(mmsinicio <= mmsfim){
+            var tempopr = mmsfim - mmsinicio
+            // if (bateu == false){
+            document.getElementById('tempoproc').value+=tempopr + ' - '
+            // }
+        }else {
+            document.getElementById('tempoproc').value+= 'min-over'
+        }
+
+    }
+// ----------------------------------------------------
+

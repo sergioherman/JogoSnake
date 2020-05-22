@@ -1,12 +1,14 @@
 <!--
 *** Permitir que o jogador configure cor e maçã longe da borda
-*** o código ficou muito pesado, tem que enxugar.
+*** Verificar se o código tá pesado (pedir pro fin)
+* fazer cobra se manter acelerada quando apertado tecla C e muda a direção
 * acelerar a cobra quando espaço estiver apertado e frear quando soltar
 * setar padding dos quadrados de acordo com o tamanho da tela (pegar informação do tamanho da tela)
 * Fazer tela de ganhou se a cobra preencher tudo
 * Congrat niveis quando a cobra atingir tamanho = tamx ou tamy (o que for maior)
 * BUG - delay no gameover quando a cobra está muito grande??? (Tentar mudar a estruturação do código)
 * Dividir gomo em gomox e gomoy (nao deve melhorar muito a princípio)
+*** FAZER PROGRAMAÇÃO FIFO
 -->
 
 <!DOCTYPE html>
@@ -16,17 +18,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake</title>
 </head>
-<body onKeyDown="pegadir(event.keyCode);">
+<body onkeydown="pegadir(event.keyCode);">
+    
     <h1 id = 'tit'>Snake</h1>
     <hr>
     <div id = 'gameover'></div>
     <div id = 'quadro'></div>
     <input id = 'tamanhocobra' type="text"></input>
     <div id = 'botoes'>
-        <input class = 'bcel' id = 'bcima' type="button" value='&#9650;' onclick="dircima()">
-        <input class = 'bcel' id = 'bdir' type="button" value='&#9658;' onclick="dirdir()">
-        <input class = 'bcel' id = 'besq' type="button" value='&#9668;' onclick="diresq()">
-        <input class = 'bcel' id = 'bbaixo' type="button" value='&#9660;' onclick="dirbaixo()">
+        <input class = 'bcel' id = 'bcima' type="button" value='&#9650;' onmouseover="dircima()">
+        <input class = 'bcel' id = 'bdir' type="button" value='&#9658;' onmouseover="dirdir()">
+        <input class = 'bcel' id = 'besq' type="button" value='&#9668;' onmouseover="diresq()">
+        <input class = 'bcel' id = 'bbaixo' type="button" value='&#9660;' onmouseover="dirbaixo()">
         <input class = 'bmid' id = 'bpause' type="button" value='Pause (P)' onclick="bpause()">
         <!-- <input class = 'bconfig' id = 'baplicar' type="button" value='Aplicar' onclick="aplicar()"> -->
         <input class = 'bmid' id = 'bacelera' type="button" value= 'Acelerar (X)' onmousedown="acelera()">
@@ -48,7 +51,32 @@
     <!-- <div id = 'res5'>oi</div> -->
     <!-- <div id = 'res7'></div> -->
 
+
+<!-- --------------APAGAR------------------------ -->
+    <div id = 'tempodeprocessamento'>
+        <div id="dinicio">Início: 
+            <input type="text" id="inicio">
+        </div>
+        <div id="dfim"> Fim: 
+            <input type="text" id="fim">
+        </div>
+        <div id="dtempoproc"> Tempo de Processamento: 
+            <input type="text" id = "tempoproc">
+        </div>   
+        <div id="dchamou"> Chamou: 
+            <input type="text" id = 'chamou'>
+        </div>
+    </div>
+<!-- -------------------------------------------- -->
+
+
+
     <style>
+        #tempodeprocessamento{
+            position:absolute;
+            top: 70%;
+            left: 40%;
+        }
          #res5{
             position: absolute;
             top: 50%;
@@ -214,8 +242,10 @@
         }
     </style>
     <script>
+        epraacelerar = false
+        primeiropassoac = false
+        chamouanda = 0
         
-        // document.getElementById('res5')= 'oii'
         tamquad = 100 //setar de 90 a 200
         cor = 200 //setar de 190 a 220 -- quanto maior o número mais fraco fica o rabo
         tempoinicio = 1000
@@ -246,18 +276,18 @@
             texto+='</table>'
             document.getElementById('quadro').innerHTML=texto
             // chamaanda = 0
-            restart() //seria bom se nao reiniciasse ao mexer no tamanho da tela, mas estavadando um bug em que a função anda nao era chamada por ninguem ao restartar e mexer no tamanho da tela
+
+            // restart() //seria bom se nao reiniciasse ao mexer no tamanho da tela, mas estavadando um bug em que a função anda nao era chamada por ninguem ao restartar e mexer no tamanho da tela
         }
 
         var continua = true
         
-        
         restart()
         
         function restart(){
-            
-            passo = 0
 
+            passo = 0
+            
             continua = true
             // BUG - ESSA VARIÁVEL NAO ESTÁ ZERANDO!
             temporang = parseInt(document.getElementById('btempo').value)
@@ -300,18 +330,49 @@
             document.getElementById(vermelho).style.background='red'
 
             direcao = 'dir'
-
             comeu = false
             bateu = false
-            // algo = 'fora'
+
+// melhorar essa condição de chamada da função anda
             // Evita chamada dupla da função anda com restarts consecutivos
-            if (chamaanda == 0){
-                setTimeout(anda,tempoinicio)
-                // algo = 'dentro'
-                chamaanda++
+            // if (chamaanda == 0){
+                // setTimeout(anda,tempoinicio)
+                // chamaanda++
+            // }
+
+            // podechamar = true
+            if (chamouanda==0){
+                chamouanda++
+                clearTimeout(timeoutinicio)
+                var timeoutinicio = setTimeout(anda,tempoinicio)
+                // podechamar = false
+                document.getElementById('chamou').value = chamouanda
             }
-            // window.document.getElementById('res5').innerHTML=algo   
+                
+            // clearTimeout(timeoutinicio)
             function anda () {
+                if(epraacelerar){
+                    if (primeiropassoac){
+                        tempo = tempoac/3
+                        primeiropassoac = false
+                    }else{tempo = temporang}
+                }
+
+                // chamouanda++
+                document.getElementById('chamou').value = chamouanda
+                clearTimeout(timeoutinicio)
+                timeoutinicio=null
+                
+                // chamaanda = 0
+
+// ---------------------- APAGAR -------------------------
+                var data = new Date();
+                var mmsinicio = data.getMilliseconds();
+                document.getElementById('inicio').value=mmsinicio
+// -------------------------------------------------------
+
+
+
                 // window.document.getElementById('res5').innerHTML+= ' + anda'
 
                 // Algumas vezes ninguem chama a função anda quando se ajusta o tamanho da tela (roda a função aplicar) e restarta o jogo (roda a função restart)
@@ -353,8 +414,11 @@
                     if (bateu == true){
                         // Exibe Game Over e para a função
                         document.getElementById('gameover').innerHTML = '<h1 style="padding: 20px; box-shadow: 10px 10px 10px rgba(0,0,0,0.25);">Game Over</h1>'
-                        
+                        clearTimeout(timeout1)
+                        chamouanda = 0
                     } else{
+                        var timeout1 = setTimeout(anda,tempo)
+ 
                         passo++
                         document.getElementById('pass').innerText='Passo: '+passo
 
@@ -396,8 +460,27 @@
                 }else{
                     document.getElementById('gameover').innerHTML = '<h1 style="padding: 20px; box-shadow: 10px 10px 10px rgba(0,0,0,0.25);">Pause</h1>'
                 }
-                setTimeout(anda,tempo)                  
+                  
+
+// ----------------------- APAGAR -----------------------------
+                var data = new Date();
+                var mmsfim = data.getMilliseconds();
+                document.getElementById('fim').value=mmsfim
+                if (bateu == false && continua == true) {
+                    if(mmsinicio <= mmsfim){
+                        var tempopr = mmsfim - mmsinicio
+                        // if (bateu == false){
+                        document.getElementById('tempoproc').value+=tempopr + ' - '
+                        // }
+                    }else {
+                        document.getElementById('tempoproc').value+= 'min-over'
+                    }
+
+                }
+// ----------------------------------------------------
+
             }
+
         }
         function pegadir(tecla){
             // alert(tecla)
@@ -412,6 +495,10 @@
             if(tecla==82) {restart()}
             if(tecla==88) {tempo = tempoac}
             if(tecla==90) {tempo = temporang}
+            if(tecla==67) {
+                epraacelerar=true
+                primeiropassoac = true
+            }
         }
         function dircima(){ if (estavaindopara != 'baixo') {direcao = 'cima'}}
         function diresq(){ if (estavaindopara != 'dir') {direcao = 'esq'}}
