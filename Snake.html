@@ -1,12 +1,15 @@
 <!--
-*** Permitir que o jogador configure cor e maçã longe da borda
-*** Verificar se o código tá pesado (pedir pro fin)
-* fazer cobra se manter acelerada quando apertado tecla C e muda a direção
-* acelerar a cobra quando espaço estiver apertado e frear quando soltar
+*** Verificar se o código tá pesado
+
+** fazer cobra se manter acelerada quando apertado tecla C e muda a direção
+** acelerar a cobra quando espaço estiver apertado e frear quando soltar
+
 * setar padding dos quadrados de acordo com o tamanho da tela (pegar informação do tamanho da tela)
+
 * Fazer tela de ganhou se a cobra preencher tudo
+* Permitir que o jogador configure cor e maçã longe da borda
 * Congrat niveis quando a cobra atingir tamanho = tamx ou tamy (o que for maior)
-* BUG - delay no gameover quando a cobra está muito grande??? (Tentar mudar a estruturação do código)
+
 * Dividir gomo em gomox e gomoy (nao deve melhorar muito a princípio)
 *** FAZER PROGRAMAÇÃO FIFO
 -->
@@ -19,7 +22,6 @@
     <title>Snake</title>
 </head>
 <body onkeydown="pegadir(event.keyCode);">
-    
     <h1 id = 'tit'>Snake</h1>
     <hr>
     <div id = 'gameover'></div>
@@ -30,11 +32,11 @@
         <input class = 'bcel' id = 'bdir' type="button" value='&#9658;' onmouseover="dirdir()">
         <input class = 'bcel' id = 'besq' type="button" value='&#9668;' onmouseover="diresq()">
         <input class = 'bcel' id = 'bbaixo' type="button" value='&#9660;' onmouseover="dirbaixo()">
-        <input class = 'bmid' id = 'bpause' type="button" value='Pause (P)' onclick="bpause()">
         <!-- <input class = 'bconfig' id = 'baplicar' type="button" value='Aplicar' onclick="aplicar()"> -->
-        <input class = 'bmid' id = 'bacelera' type="button" value= 'Acelerar (X)' onmousedown="acelera()">
-        <input class = 'bmid' id = 'bfrear' type="button" value= 'Frear (Z)' onmousedown="frear()">
-        
+        <!-- colocar on mouse over > acelerar e onmouseout > frear -->
+        <input class = 'bmid' id = 'bacelera' type="button" value= 'Ac(X) Fr(Z)' onmouseover="acelera()" onmouseout="frear()">
+        <!-- <input class = 'bmid' id = 'bfrear' type="button" value= 'Frear (Z)' onmousedown="frear()"> -->
+        <input class = 'bmid' id = 'bpause' type="button" value='Pause (P)' onclick="bpause()">
         <input class = 'bmid' id = 'brestart' type="button" value='Restart (R)' onclick="restart()">
         <div id = 'dbtam'>
             <p>Tamamho</p>
@@ -48,28 +50,23 @@
             <div id = 'vel'></div>
         </div>
     </div>
-    <!-- <div id = 'res5'>oi</div> -->
-    <!-- <div id = 'res7'></div> -->
-
 
 <!-- --------------APAGAR------------------------ -->
     <div id = 'tempodeprocessamento'>
         <div id="dinicio">Início: 
-            <input type="text" id="inicio">
+            <input type="text" id="inicio" readonly>
         </div>
         <div id="dfim"> Fim: 
-            <input type="text" id="fim">
+            <input type="text" id="fim" readonly>
         </div>
         <div id="dtempoproc"> Tempo de Processamento: 
-            <input type="text" id = "tempoproc">
+            <input type="text" id = "tempoproc" readonly>
         </div>   
         <div id="dchamou"> Chamou: 
-            <input type="text" id = 'chamou'>
+            <input type="text" id = 'chamou' readonly>
         </div>
     </div>
 <!-- -------------------------------------------- -->
-
-
 
     <style>
         #tempodeprocessamento{
@@ -150,7 +147,6 @@
             height: 35px;
             position: absolute;
             top: 100%;
-            
         }
         #bpause{
             left: 50%;
@@ -459,6 +455,7 @@
                     document.getElementById(vermelho).style.background='red'
                 }else{
                     document.getElementById('gameover').innerHTML = '<h1 style="padding: 20px; box-shadow: 10px 10px 10px rgba(0,0,0,0.25);">Pause</h1>'
+                    var timeout1 = setTimeout(anda,tempo)
                 }
                   
 
@@ -484,10 +481,10 @@
         }
         function pegadir(tecla){
             // alert(tecla)
-            if ((tecla == 37 || tecla == 65) && estavaindopara != 'dir') {direcao = 'esq'}
-            if ((tecla == 38 || tecla == 87) && estavaindopara != 'baixo') {direcao = 'cima'}
-            if ((tecla == 39 || tecla == 68) && estavaindopara != 'esq') {direcao = 'dir'}
-            if ((tecla == 40 || tecla == 83) && estavaindopara != 'cima') {direcao = 'baixo'}
+            if ((tecla == 37 || tecla == 65) && (estavaindopara != 'dir')&&(estavaindopara != 'esq')) {direcao = 'esq'}
+            if ((tecla == 38 || tecla == 87) && (estavaindopara != 'baixo')&&(estavaindopara != 'cima')) {direcao = 'cima'}
+            if ((tecla == 39 || tecla == 68) && (estavaindopara != 'esq')&&(estavaindopara != 'dir')) {direcao = 'dir'}
+            if ((tecla == 40 || tecla == 83) && (estavaindopara != 'cima')&&(estavaindopara != 'baixo')) {direcao = 'baixo'}
             if (tecla == 80){
                 if (continua == false){continua=true}
                 else{continua = false}
@@ -505,7 +502,8 @@
         function dirdir(){ if (estavaindopara != 'esq') {direcao = 'dir'}}
         function dirbaixo(){ if (estavaindopara != 'cima') {direcao = 'baixo'}}
         function bpause(){
-            if (continua == false){continua=true}
+            if (continua == false){
+                continua=true}
                 else{continua = false}
             }
         function acelera(){tempo = tempoac}
