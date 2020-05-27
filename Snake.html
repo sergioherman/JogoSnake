@@ -395,7 +395,7 @@
                     if (direcao == 'dir') {gomo[tamc-1]=[gomo[tamc-1][0],gomo[tamc-1][1]+1]}
                     if (direcao == 'baixo') {gomo[tamc-1]=[gomo[tamc-1][0]+1,gomo[tamc-1][1]]}
                 
-                    // Verifica se a cobra bateu na nela mesma
+                    // Verifica se a cobra bateu nela mesma
                     tamgomo = gomo.length
                     for (let mm = 0; mm < (tamgomo-1); mm++){
                         if (String(gomo[mm]) == String(gomo[(tamgomo-1)])){

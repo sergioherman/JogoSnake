@@ -104,29 +104,14 @@
         init()
         setTimeout('run()',tempoinicial)
 
-        function declaracaodevariaveis(){
-            passo=0
-            tamx = 15 //parseInt(document.getElementById('btamx').value)
-            tamy = 10 //parseInt(document.getElementById('btamy').value)
-            cobra = [[1,2,1],[2,2,2],[3,2,0]]
-            // cobra = [[1,2,1],[2,2,2],[3,2,3],[4,2,4],[5,2,5]]
-            direcao = 'direita'
-            tamc = cobra.length
-            comeu = false
-            apontaatual = cobra[(tamc-2)][2]
-            apontaproximo = cobra[(tamc-1)][2]
-            tempoinicial = 1000
-            tempopasso = 1000
-            desenhar = true
-        }
-
         function init(){
             tamanhodasareas() //pronto
             montaquadro() //pronto
             montabotoes() //pronto mas falta configurações e placar
+            
             // Desenha a cobra inicial no tabuleiro
             for(let nn=0; nn<tamc; nn++){
-                var gomo = String(cobra[nn][0]) +'-'+ String(cobra[nn][1])
+                var gomo = cobrax[nn]+'-'+cobray[nn]
                 document.getElementById(gomo).style.backgroundColor= 'white'
             }
             updatemaca()
@@ -134,25 +119,31 @@
         
         
         function run(){
-            document.getElementById('config').innerHTML+='Aponta atual: ' +apontaatual+'</br>'
-            document.getElementById('config').innerHTML+='Aponta proximo: ' +apontaproximo+'</br>'
+            document.getElementById('config').innerHTML=''
 
             update()
-            if (desenhar == true){draw()}
+            draw()
+            var looping1 = setTimeout(run,tempodepasso)
 
-            looping1 = setTimeout(run,tempopasso)
             passo++
-            // document.getElementById('config').innerHTML=''
-            // // document.getElementById('config').innerHTML+='Direção no fim do Run: ' +direcao+ '</br>'
+            document.getElementById('config').innerHTML+='Direção no fim do Run: ' +direcao+ '</br>'
             document.getElementById('config').innerHTML+='Passo: no fim no Run '+passo +'</br>'
-            // // document.getElementById('config').innerHTML+='Rabo: '+rabo +'</br>'
-            // document.getElementById('config').innerHTML+='Nova Cobra: ['+cobra[0]+'],['+cobra[1]+'],['+cobra[2]+'],['+cobra[3]+']</br>'
-            // document.getElementById('config').innerHTML+='Tamanho da Cobra Após Update>: '+tamc+'</br>'
-            // document.getElementById('config').innerHTML+='Maçã: '+maca+'</br>'
-            // document.getElementById('config').innerHTML+='Rabo: '+rabo+'</br>'
-
         }
 
+        function declaracaodevariaveis(){
+            passo=0
+            tamx = 15 //parseInt(document.getElementById('btamx').value)
+            tamy = 10 //parseInt(document.getElementById('btamy').value)
+            cobrax = [2,3,4]
+            cobray = [2,2,2]
+            apont = [1,2,0]
+            direcao = 'direita'
+            tamc = cobrax.length
+            comeu = false
+            tempoinicial = 700
+            tempodepasso = 250
+        }
+      
         function tamanhodasareas(){
             indicereduçãox = 0.95
             indicereduçãoy = 0.9
@@ -239,7 +230,6 @@
             if(razaoheitamy<razaowidtamx){menorrazao=razaoheitamy}
             else{menorrazao=razaowidtamx}
             tamq = parseInt(menorrazao)-5
-            if (tamq > 50) {tamq = 50}
             texto='<table id = "tabela">'
             for(let nx=1;nx<=tamy;nx++){
                 texto+='<tr id = linha'+nx+'>'
@@ -310,86 +300,75 @@
             document.getElementById('botaoacelera').style.fontSize=(alturadaacao*redbotacao*0.25*0.45)+'px'
         }
 
+
+
         function update(){
             updatecobra()
-            document.getElementById('config').innerHTML=''
-            //Verifica se comeu a maçã
-            if (String(cobra[apontaatual][0]) == String(maca[0]) && String(cobra[apontaatual][1]) == String(maca[1])) {
-                updatemaca()
-                aumentacobra()
-            }
-            //Verifico se bateu nela mesma
+
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // if (String(cobra[apontacabeca]) == String(maca)) {
+            //     updatemaca()
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+                //aumentar a cobra
+                // vai dar merda nos apontadores de rabo e cabeça, fazer o apontador der um terceiro elemento do vetor cobra
+                // assim cobra vai ser [[1,2,1],[2,2,2],[3,2,0]] o terceiro elemento aponta pro proximo da fila
+                //ao adicionar um elemento em cobra faço [[1,2,1],[2,2,2],[3,2,  3  ],[4,2,0]] o novo elemento pega o apontador do ultimo e o ultimo elemento aponta pro que acabou de entrar (tamc-1)
+                //[[4,2,1],[5,2,2],[3,2,0],[]] ---- [[4,2,1],[5,2, 3 ],[3,2,0],[6,2,2]] 
+            // }
+            
             estavaindopara=direcao
-            for (let ii = 0; ii < tamc; ii++){
-                document.getElementById('config').innerHTML+='Teste Lógico 1: '+cobra[apontaatual][0]+cobra[ii][0]+'</br>'
-                document.getElementById('config').innerHTML+='Teste Lógico 2: '+cobra[apontaatual][1]+cobra[ii][1]+'</br>'
-                if (ii != apontaatual){
-                    if (String(cobra[apontaatual][0]) == String(cobra[ii][0]) && String(cobra[apontaatual][1]) == String(cobra[ii][1])) {
-                    gameover()
-                    
-                    }
-                }
-            }
-
-            // Verifica se bateu na parede
-            if (cobra[apontaatual][0]>tamx || cobra[apontaatual][1]<1 || cobra[apontaatual][1]>tamy || cobra[apontaatual][0]<1) { 
-                gameover()
-                   
-            }
-
+            document.getElementById('config').innerHTML+='Tamanho da Cobra Após Update>: '+tamc+'</br>'
+            // document.getElementById('config').innerHTML+='Cobra Após Update: '+cobra+'</br>'
+            // document.getElementById('config').innerHTML+='Cabeça da cobra: '+cobra[apontacabeca]+'</br>'
+            // document.getElementById('config').innerHTML+='Maçã: '+maca+'</br>'
         }
 
         function updatecobra(){
-            tamc=cobra.length
-            rabo = String(cobra[apontaproximo][0]+'-'+cobra[apontaproximo][1])
-            if (direcao == 'direita') {cobra[apontaproximo]=[cobra[apontaatual][0]+1,cobra[apontaatual][1],cobra[apontaproximo][2]]}
-            if (direcao == 'esquerda') {cobra[apontaproximo]=[cobra[apontaatual][0]-1,cobra[apontaatual][1],cobra[apontaproximo][2]]}
-            if (direcao == 'cima') {cobra[apontaproximo]=[cobra[apontaatual][0],cobra[apontaatual][1]-1,cobra[apontaproximo][2]]}
-            if (direcao == 'baixo') {cobra[apontaproximo]=[cobra[apontaatual][0],cobra[apontaatual][1]+1,cobra[apontaproximo][2]]}
-            gomo = String(cobra[apontaproximo][0]+'-'+cobra[apontaproximo][1])
-            
-            apontaproximo = cobra[apontaproximo][2]
-            apontaatual = cobra[apontaatual][2]
+
+
+            // if (direcao == 'direita') {cobrax[apont[cabeca]]++}
+
+        //     if (direcao == 'esquerda') {cobra[apontarabo]=[cobra[apontacabeca][0]-1,cobra[apontacabeca][1]]}
+        //     if (direcao == 'cima') {cobra[apontarabo]=[cobra[apontacabeca][0],cobra[apontacabeca][1]-1]}
+        //     if (direcao == 'baixo') {cobra[apontarabo]=[cobra[apontacabeca][0],cobra[apontacabeca][1]+1]}
+
+
+        //     apontacabeca++
+
+        //     if (apontacabeca == tamc) {apontacabeca=0}
+        //     if (apontacabeca != tamc-1) {apontarabo=apontacabeca+1}else{apontarabo=0}
+
+        //     rabo = String(cobra[apontarabo][0]+'-'+cobra[apontarabo][1])
+
+
+        //     gomo = String(cobra[apontarabo][0]+'-'+cobra[apontarabo][1])
+
 
         }
 
         function updatemaca(){
-            maca = [parseInt(1+(tamx*Math.random())),parseInt(1+(tamy*Math.random()))]
-            var mudadenovo = true
-            while (mudadenovo){
-                mudadenovo = false
-                for (let mm = 0; mm < tamc; mm++){
-                    if (String(cobra[mm][0])+','+String(cobra[mm][1]) == String(maca)){
-                        maca = [parseInt(1+(tamx*Math.random())),parseInt(1+(tamy*Math.random()))]
-                        mudadenovo = true
-                    }
-                }
-            }
-            vermelho = String(maca[0]) +'-'+ String(maca[1])
-        }
-
-        function aumentacobra(){
-            cobra[tamc] = [cobra[apontaproximo][0],cobra[apontaproximo][1]]
-            document.getElementById('config').innerHTML+='Nova Cobra: ['+cobra[0]+'],['+cobra[1]+'],['+cobra[2]+'],['+cobra[3]+']</br>'
-            cobra[tamc][2]=cobra[apontaatual][2]
-            document.getElementById('config').innerHTML+='Nova Cobra: ['+cobra[0]+'],['+cobra[1]+'],['+cobra[2]+'],['+cobra[3]+']</br>'
-            cobra[apontaatual][2]=tamc
-            apontaproximo=tamc
+            macax = parseInt(1+(tamx*Math.random()))
+            macay = parseInt(1+(tamy*Math.random()))
+            // var mudadenovo = true
+            // while (mudadenovo){
+            //     mudadenovo = false
+            //     for (let mm = 0; mm < tamc; mm++){
+            //         if (String(cobrax[mm]) == String(macax) && String(cobray[mm]) == String(macay)){
+            //             macax = parseInt(1+(tamx*Math.random()))
+            //             macay = parseInt(1+(tamy*Math.random()))
+            //             mudadenovo = true
+            //         }
+            //     }
+            // }
+            vermelho = String(macax) +'-'+ String(macay)
         }
 
         function draw(){
-            document.getElementById(vermelho).style.backgroundColor= 'red'
-            document.getElementById(rabo).style.backgroundColor= 'black'
-            document.getElementById(gomo).style.backgroundColor= 'white'
-        }
-
-        function gameover(){
-            document.getElementById('placar').innerHTML='BATEU!'
-            // clearTimeout(looping1) //nao consigo parar o looping
-            
-            window.clearTimeout(looping1) // AINDA NAO DEU CERTO A PARADA DO LOOPING!!!! PAREI AQUI
-
-            desenhar = false
+            document.getElementById(vermelho).style.background= 'red'
+            // document.getElementById(gomo).style.backgroundColor= 'white'
+            // document.getElementById(rabo).style.backgroundColor= 'black'
         }
 
         function pegadirecao(botaoapertado){
