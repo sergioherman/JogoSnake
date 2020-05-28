@@ -1,3 +1,9 @@
+<!--
+Implementar CSS com percentuais e remover estilo do Javascript    
+fazer o placar
+fazer as configurações
+-->
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -15,6 +21,7 @@
         <hr>
         <div class = 'caixaexterna' id = 'areaquadro'>
             <div id='quadro'></div>
+            <div id='letreiro'> <p id='textodoletreiro'></p></div>
         </div>
         <div class = 'caixaexterna' id = 'controle'>
             <div class = 'caixaexterna' id = 'direcional'>
@@ -33,13 +40,13 @@
             <div class = 'caixaexterna' id = 'acao'>
                 <table id='tabelaacao'>
                     <tr>
-                        <td id='celulabotaorestart'><input class='botaoacao' id='botaorestart' type="button" value='Restart' onmouseover="restart()"></td>
+                        <td id='celulabotaorestart'><input class='botaoacao' id='botaorestart' type="button" value='Restart' onclick="restart()"></td>
                     </tr>
                     <tr>
-                        <td id='celulabotaopause'><input class='botaoacao' id='botaopause' type="button" value='Pause' onmouseover="pause()"></td>
+                        <td id='celulabotaopause'><input class='botaoacao' id='botaopause' type="button" value='Pause' onclick="pause()"></td>
                     </tr>
                     <tr>
-                        <td id='celulabotaoacelera'><input class = 'botaoacao' id = 'botaoacelera' type="button" value='Acelera' onmouseover="acelera()"></td>
+                        <td id='celulabotaoacelera'><input class = 'botaoacao' id = 'botaoacelera' type="button" value='Acelera' onmouseover="acelera()" onmouseout="frea()"></td>
                     </tr>
                 </table>
             </div>    
@@ -88,69 +95,118 @@
             width: fit-content; /* nao funciona no firefox*/
             width: -moz-fit-content;
             transform: translate(0px,5px);
+            /* box-shadow:0px 0px 1px 1px rgba(255, 255, 255, 0.7) inset; */
         }
         .quadrinho{
-            box-shadow:1px 1px 2px 2px rgba(255, 255, 255, 0.7) inset;
+            box-shadow:1px 2px 1px 0px rgba(255, 255, 255, 0.7) inset;
+            border-radius: 20%;
         }
         td p {
             display: none;
         }
+        #letreiro{
+            position: relative;
+            margin: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: white solid 2px;
+            transform: rotate(-20deg);
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+            width: fit-content;
+            width: -moz-fit-content;
+            padding: 20px;
+        }
+        #textodoletreiro{
+            margin: auto;
+            position: relative;
+            top: 50%;
+            transform: translate(0%,-50%);
+            text-shadow: 7px 7px 2px rgba(0, 0, 0, 0.65);
+            /* margin: auto; */
+        }
     </style>
     
     <script>
+        window.addEventListener("keydown",function(event){pegadirteclado(event.keyCode)})
         window.addEventListener("resize", function(){init()})
-
+        window.addEventListener("resize", function(){drawmaca()})
+        
         declaracaodevariaveis()
         init()
-        setTimeout('run()',tempoinicial)
+        
+        updatemaca()
+        drawmaca()
 
-        function declaracaodevariaveis(){
-            passo=0
-            tamx = 15 //parseInt(document.getElementById('btamx').value)
-            tamy = 10 //parseInt(document.getElementById('btamy').value)
-            cobra = [[1,2,1],[2,2,2],[3,2,0]]
-            // cobra = [[1,2,1],[2,2,2],[3,2,3],[4,2,4],[5,2,5]]
-            direcao = 'direita'
-            tamc = cobra.length
-            comeu = false
-            apontaatual = cobra[(tamc-2)][2]
-            apontaproximo = cobra[(tamc-1)][2]
-            tempoinicial = 1000
-            tempopasso = 1000
-            desenhar = true
+        document.getElementById('letreiro').style.display = 'block'
+        document.getElementById('textodoletreiro').innerHTML = 'Start' 
+        setTimeout (apagaletreiro,tempoinicial)
+        
+        delaydeinicio = setTimeout(run,tempoinicial)
+
+        function apagaletreiro(){
+            document.getElementById('letreiro').style.display='none'
         }
 
         function init(){
-            tamanhodasareas() //pronto
-            montaquadro() //pronto
+            tamanhodasareas()
+            montaquadro()
             montabotoes() //pronto mas falta configurações e placar
-            // Desenha a cobra inicial no tabuleiro
+            desenhacobrainteira()
+        }     
+
+        function desenhacobrainteira(){
             for(let nn=0; nn<tamc; nn++){
-                var gomo = String(cobra[nn][0]) +'-'+ String(cobra[nn][1])
-                document.getElementById(gomo).style.backgroundColor= 'white'
+                if(cobra[nn][0]>0 && cobra[nn][0]<=tamx && cobra[nn][1] > 0 && cobra[nn][1] < tamy){
+                    gomo = String(cobra[nn][0]) +'-'+ String(cobra[nn][1])
+                    document.getElementById(gomo).style.backgroundColor= 'white'
+                    document.getElementById(gomo).style.borderRadius='30%'
+                }
             }
-            updatemaca()
         }
         
-        
         function run(){
-            document.getElementById('config').innerHTML+='Aponta atual: ' +apontaatual+'</br>'
-            document.getElementById('config').innerHTML+='Aponta proximo: ' +apontaproximo+'</br>'
-
-            update()
-            if (desenhar == true){draw()}
-
-            looping1 = setTimeout(run,tempopasso)
             passo++
+            temporizador = setTimeout(run,tempopasso)
+            update()
+            if (fimdojogo == false){
+                drawgomo()
+                drawmaca()    
+            }
+            erase()
+            
             // document.getElementById('config').innerHTML=''
             // // document.getElementById('config').innerHTML+='Direção no fim do Run: ' +direcao+ '</br>'
-            document.getElementById('config').innerHTML+='Passo: no fim no Run '+passo +'</br>'
+            // document.getElementById('config').innerHTML+='Aponta atual: ' +apontaatual+'</br>'
+            // document.getElementById('config').innerHTML+='Aponta proximo: ' +apontaproximo+'</br>'
+            // document.getElementById('config').innerHTML+='Passo: no fim no Run '+passo +'</br>'
             // // document.getElementById('config').innerHTML+='Rabo: '+rabo +'</br>'
             // document.getElementById('config').innerHTML+='Nova Cobra: ['+cobra[0]+'],['+cobra[1]+'],['+cobra[2]+'],['+cobra[3]+']</br>'
             // document.getElementById('config').innerHTML+='Tamanho da Cobra Após Update>: '+tamc+'</br>'
             // document.getElementById('config').innerHTML+='Maçã: '+maca+'</br>'
             // document.getElementById('config').innerHTML+='Rabo: '+rabo+'</br>'
 
+        }
+
+        function declaracaodevariaveis(){
+            document.getElementById('letreiro').style.display='none'
+            passo=0
+            tamx = 15 //parseInt(document.getElementById('btamx').value)
+            tamy = 10 //parseInt(document.getElementById('btamy').value)
+            cobra = [[1,2,1],[2,2,2],[3,2,0]]
+            // cobra = [[1,2,1],[2,2,2],[3,2,3],[4,2,4],[5,2,0]]
+            direcao = 'direita'
+            tamc = cobra.length
+            comeu = false
+            apontaatual = cobra[(tamc-2)][2]
+            apontaproximo = cobra[(tamc-1)][2]
+            tempoinicial = 1000
+            temponormal = 250
+            tempoacelerado = temponormal*0.4
+            tempopasso = temponormal
+            fimdojogo = false
+            rabo = rabo = String(cobra[apontaproximo][0]+'-'+cobra[apontaproximo][1])
+            gomo = rabo
+            paused = false
         }
 
         function tamanhodasareas(){
@@ -207,6 +263,14 @@
             document.getElementById('areaquadro').style.height=alturaareaquadro+'px'
             // document.getElementById('areaquadro').innerHTML=larguraareaquadro+' - '+alturaareaquadro
             // document.getElementById('areaquadro').style.backgroundColor='yellow'
+
+            //Confugura Área do Letreiro
+            // document.getElementById('letreiro').style.width=larguradotitulo+'px'
+            document.getElementById('letreiro').style.height=alturadotitulo+'px'
+            // document.getElementById('letreiro').style.position='relative'
+            document.getElementById('letreiro').style.top='-'+alturaareaquadro/2+'px'
+            document.getElementById('letreiro').style.fontSize=alturadotitulo*0.6+'px'
+            // document.getElementById('letreiro').style.marginTop=alturadotitulo+'px'
 
 
             //Configura a Área do Controle
@@ -321,22 +385,17 @@
             //Verifico se bateu nela mesma
             estavaindopara=direcao
             for (let ii = 0; ii < tamc; ii++){
-                document.getElementById('config').innerHTML+='Teste Lógico 1: '+cobra[apontaatual][0]+cobra[ii][0]+'</br>'
-                document.getElementById('config').innerHTML+='Teste Lógico 2: '+cobra[apontaatual][1]+cobra[ii][1]+'</br>'
                 if (ii != apontaatual){
                     if (String(cobra[apontaatual][0]) == String(cobra[ii][0]) && String(cobra[apontaatual][1]) == String(cobra[ii][1])) {
                     gameover()
-                    
                     }
                 }
             }
 
             // Verifica se bateu na parede
             if (cobra[apontaatual][0]>tamx || cobra[apontaatual][1]<1 || cobra[apontaatual][1]>tamy || cobra[apontaatual][0]<1) { 
-                gameover()
-                   
+                gameover()      
             }
-
         }
 
         function updatecobra(){
@@ -370,26 +429,51 @@
 
         function aumentacobra(){
             cobra[tamc] = [cobra[apontaproximo][0],cobra[apontaproximo][1]]
-            document.getElementById('config').innerHTML+='Nova Cobra: ['+cobra[0]+'],['+cobra[1]+'],['+cobra[2]+'],['+cobra[3]+']</br>'
             cobra[tamc][2]=cobra[apontaatual][2]
-            document.getElementById('config').innerHTML+='Nova Cobra: ['+cobra[0]+'],['+cobra[1]+'],['+cobra[2]+'],['+cobra[3]+']</br>'
             cobra[apontaatual][2]=tamc
             apontaproximo=tamc
         }
 
-        function draw(){
+        function drawmaca(){
             document.getElementById(vermelho).style.backgroundColor= 'red'
-            document.getElementById(rabo).style.backgroundColor= 'black'
+            document.getElementById(vermelho).style.borderRadius='50%'
+            document.getElementById(vermelho).style.boxShadow='0px 0px 5px 2px rgba(255, 200, 0, 0.5) inset'
+        }
+        function drawgomo(){
             document.getElementById(gomo).style.backgroundColor= 'white'
+            document.getElementById(gomo).style.borderRadius='30%'
+        }
+        
+        function erase(){
+            document.getElementById(rabo).style.backgroundColor= 'black'
+            document.getElementById(rabo).style.borderRadius='20%'
+            document.getElementById(rabo).style.boxShadow='1px 2px 1px 0px rgba(255, 255, 255, 0.7) inset'
         }
 
         function gameover(){
             document.getElementById('placar').innerHTML='BATEU!'
-            // clearTimeout(looping1) //nao consigo parar o looping
-            
-            window.clearTimeout(looping1) // AINDA NAO DEU CERTO A PARADA DO LOOPING!!!! PAREI AQUI
+            clearTimeout(temporizador)
+            fimdojogo = true
+            document.getElementById('textodoletreiro').innerHTML='Game Over'
+            document.getElementById('letreiro').style.display='block'
+        }
 
-            desenhar = false
+        function restart(){
+            clearTimeout(delaydeinicio)
+            clearTimeout(temporizador)
+
+            declaracaodevariaveis()
+            init()
+        
+            updatemaca()
+            document.getElementById(vermelho).style.backgroundColor= 'red'
+        
+            document.getElementById('letreiro').style.display = 'block'
+            document.getElementById('textodoletreiro').innerHTML = 'Start' 
+            setTimeout (apagaletreiro,tempoinicial)
+        
+            delaydeinicio = setTimeout(run,tempoinicial)
+
         }
 
         function pegadirecao(botaoapertado){
@@ -400,6 +484,48 @@
             else{direcao=botaoapertado}
         }
 
-    </script>
+        function pegadirteclado(codigotecla){
+            // alert(codigodatecla)
+            if ((codigotecla == 37 || codigotecla == 65) && (estavaindopara != 'direita')&&(estavaindopara != 'esquerda')) {direcao = 'esquerda'}
+            if ((codigotecla == 38 || codigotecla == 87) && (estavaindopara != 'baixo')&&(estavaindopara != 'cima')) {direcao = 'cima'}
+            if ((codigotecla == 39 || codigotecla == 68) && (estavaindopara != 'esquerda')&&(estavaindopara != 'direita')) {direcao = 'direita'}
+            if ((codigotecla == 40 || codigotecla == 83) && (estavaindopara != 'cima')&&(estavaindopara != 'baixo')) {direcao = 'baixo'}
+
+            if (codigotecla == 80){pause()}
+            if(codigotecla==82) {restart()}
+
+            if(codigotecla==88) {tempopasso = tempoacelerado}
+            if(codigotecla==90) {tempopasso = temponormal}
+            // if(tecla==67) {
+            //     epraacelerar=true
+            //     primeiropassoac = true
+            // }
+        }
+
+        function pause(){
+            if (fimdojogo == false){
+                if (paused == false){
+                    paused = true
+                    document.getElementById('textodoletreiro').innerHTML='Paused'
+                    document.getElementById('letreiro').style.display='block'
+                    clearTimeout(temporizador)
+                
+                } else {
+                    paused = false
+                    document.getElementById('letreiro').style.display='none'
+                    setTimeout(run,tempopasso)
+                }
+            }
+        }
+    
+        function acelera(){
+            tempopasso = tempoacelerado
+        }
+
+        function frea(){
+            tempopasso = temponormal
+        }
+
+</script>
 </body>
 </html>
