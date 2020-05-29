@@ -1,7 +1,6 @@
-<!--
-Implementar CSS com percentuais e remover estilo do Javascript    
-fazer o placar
-fazer as configurações
+<!-- 
+Fazer o cronômetro
+Fazer as configurações
 -->
 
 <!DOCTYPE html>
@@ -14,28 +13,51 @@ fazer as configurações
 <body>
     <div id = 'divglobal'>
         <div class = 'caixaexterna' id = 'cabecalho'>
-            <div class = 'caixaexterna' id = 'config'></div>
+            <div class = 'caixaexterna' id = 'config'>
+                <input type="button" value="Config." id="botaoconfig" class="botaoacao" onclick="configurar()">
+            </div>
             <div class = 'caixaexterna' id = 'titulo'><h1 id = 'tituloh1' >Snake</h1></div>
-            <div class = 'caixaexterna' id = 'placar'></div>
+            <div class = 'caixaexterna' id = 'placar'>
+                <div class = 'caixaexterna' id='cronometro'>
+                    <div class = 'conjtxtplacar'>
+                        <p class = 'txtplacar' id = titulocrono ></p>
+                        <p id='txtcrono' class='txtplacar'></p>
+                    </div>
+                </div>
+                <div class = 'caixaexterna' id='passosdados'>
+                    <div class = 'conjtxtplacar'>
+                        <p class = 'txtplacar' id = titulopassos >Passos:</p>
+                        <p id='passosdadostxt' class='txtplacar'></p>
+                    </div>
+                </div>
+                <div class = 'caixaexterna' id='numerodemacas'>
+                    <div class = 'conjtxtplacar'>
+                        <p class = 'txtplacar' id = titulonmacas >Maçãs:</p>
+                        <p id='txtnummacas' class='txtplacar'></p>
+                    </div>
+                </div>
+            </div>
         </div>
         <hr>
         <div class = 'caixaexterna' id = 'areaquadro'>
             <div id='quadro'></div>
             <div id='letreiro'> <p id='textodoletreiro'></p></div>
         </div>
+        <hr>
         <div class = 'caixaexterna' id = 'controle'>
             <div class = 'caixaexterna' id = 'direcional'>
-                <table id = 'tabeladirecional'>
-                    <tr>
-                        <td></td><td id='celulabotaocima'><input class = 'botaodirecional' id = 'botaocima' type="button" value='&#9650;' onmouseover="pegadirecao('cima')"></td><td></td>
-                    </tr>
-                    <tr>
-                        <td id='celulabotaoesquerda'><input class = 'botaodirecional' id = 'botaoesq' type="button" value='&#9668;' onmouseover="pegadirecao('esquerda')"></td><td></td><td id='celulabotaodireita'><input class = 'botaodirecional' id = 'botaodir' type="button" value='&#9658;' onmouseover="pegadirecao('direita')"></td>
-                    </tr>
-                    <tr>
-                        <td></td><td id='celulabotaobaixo'><input class = 'botaodirecional' id = 'botaobaixo' type="button" value='&#9660;' onmouseover="pegadirecao('baixo')"></td><td></td>
-                    </tr>
-                </table>
+                <div id = divbotaocima class="caixaexterna">
+                    <input class = 'botaodirecional' id = 'botaocima' type="button" value='&#9650;' onmouseover="pegadirecao('cima')">
+                </div>
+                <div id='divbotaoesq' class = 'caixaexterna'>
+                    <input class = 'botaodirecional' id = 'botaoesq' type="button" value='&#9668;' onmouseover="pegadirecao('esquerda')">
+                </div>
+                <div id='divbotaodir' class = 'caixaexterna'>
+                    <input class = 'botaodirecional' id = 'botaodir' type="button" value='&#9658;' onmouseover="pegadirecao('direita')">
+                </div>
+                <div id='divbotaobaixo' class = 'caixaexterna'>
+                    <input class = 'botaodirecional' id = 'botaobaixo' type="button" value='&#9660;' onmouseover="pegadirecao('baixo')">
+                </div>
             </div>
             <div class = 'caixaexterna' id = 'acao'>
                 <table id='tabelaacao'>
@@ -49,10 +71,63 @@ fazer as configurações
                         <td id='celulabotaoacelera'><input class = 'botaoacao' id = 'botaoacelera' type="button" value='Acelera' onmouseover="acelera()" onmouseout="frea()"></td>
                     </tr>
                 </table>
-            </div>    
+            </div>   
+        </div>
+        <div id = 'teladeconfiguracoes'>
+            <div id="fechaconfig" onclick="fecharconfig()"><div id="txtfechaconfig">[x]</div></div>
+            <div id="corpoconfig">
+                <div class = 'tituloconfig'>Tamanho Horizontal:
+                    <input type="range" class='brange' id='btamx' value='15' oninput="montaquadro()" max="50" min='5'>
+                </div>
+                <div class = 'tituloconfig'>Tamanho Vertical:
+                    <input type="range" class='brange' id='btamy' value='10' oninput="montaquadro()" max="30" min='5'>
+                </div>
+                <div class = 'tituloconfig'>Velocidade:
+                    <input type="range" class='brange' id='vel' value='4' oninput="alteravelocidade()" max="20" min='1'>
+                </div>
+            </div>
         </div>
     </div>
     <style>
+        #botaoconfig{
+            background-color: black;
+            color: white;
+        }
+        #corpoconfig{
+            position: absolute;
+            top: 20%;
+        }
+        .tituloconfig{
+            margin: 5% 5%;
+        }
+        .brange{
+            margin: 5% 10% 0% 5%;
+            width: 100px;
+            height: 15px;
+        }
+        #fechaconfig{
+            position: absolute;
+            top: 5%;
+            left: 95%;
+            transform: translate(-100%,0) rotate(5deg);
+            background-color: rgba(255, 0, 0, 0.55);
+            color: rgba(255, 255, 255, 0.85);
+            border: rgba(0, 0, 0, 0.65);
+            width: 20%;
+            height: 12%;
+            margin: 0px;
+            border-radius: 20%;
+        }
+        #txtfechaconfig{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%) rotate(-15deg);
+            margin: 0px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 600;
+            font-size: 80%;
+        }
         hr{
             margin: 0px;
         }
@@ -61,14 +136,14 @@ fazer as configurações
             font-family: 'Courier New', Courier, monospace;
             font-weight: 600;
             text-shadow: 3px 3px 5px rgba(0, 0, 0, 1);
-        }
-        #tabeladirecional{
-            position: relative;
-            top: 5%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
         }
         .botaodirecional{
             border-radius: 25%;
             text-shadow: 3px 3px 5px rgba(0, 0, 0, 1);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
         }
         body{
             background-color: black;
@@ -83,7 +158,7 @@ fazer as configurações
             padding: 0px;
         }
         .caixaexterna{
-            box-shadow:0px 0px 0px 5px rgba(110, 110, 110, 0.7) inset;
+            /* box-shadow:0px 0px 3px 1px rgba(255, 255, 255, 0.1) inset; */
         }
         #titulo h1{
             margin: 0px;
@@ -105,11 +180,14 @@ fazer as configurações
             display: none;
         }
         #letreiro{
-            position: relative;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            /* transform: translate(-50%,-50%); */
             margin: auto;
             background-color: rgba(0, 0, 0, 0.7);
             border: white solid 2px;
-            transform: rotate(-20deg);
+            transform: translate(-50%,-50%) rotate(-20deg);
             text-align: center;
             font-family: 'Courier New', Courier, monospace;
             width: fit-content;
@@ -124,14 +202,42 @@ fazer as configurações
             text-shadow: 7px 7px 2px rgba(0, 0, 0, 0.65);
             /* margin: auto; */
         }
+        .conjtxtplacar{
+            position: relative;
+            top: 50%;
+            transform: translate(0,-50%);
+            
+        }
+        .txtplacar{
+            /* border: solid white; */
+            text-align: center;
+            margin: 0px;
+            /* font-size: 10px; */
+            transform: rotate(-15deg);
+            
+        }
+        #teladeconfiguracoes{
+            position: absolute;
+            top: 10%;
+            width: 40%;
+            height: 55%;
+            border: solid white 1px;
+            display: none;
+            box-shadow:1px 2px 5px 5px rgba(255, 255, 255, 0.7) inset;
+            background-color: rgba(0, 0, 0, 0.85);
+        }
+
     </style>
     
     <script>
-        window.addEventListener("keydown",function(event){pegadirteclado(event.keyCode)})
+
+        window.addEventListener('keydown',function(event){acaoteclado(event.keyCode)})
+        window.addEventListener('keyup',function (event){freaespaco(event.keyCode)})
         window.addEventListener("resize", function(){init()})
         window.addEventListener("resize", function(){drawmaca()})
-        
+        exibindoconfig = false
         declaracaodevariaveis()
+        
         init()
         
         updatemaca()
@@ -139,9 +245,16 @@ fazer as configurações
 
         document.getElementById('letreiro').style.display = 'block'
         document.getElementById('textodoletreiro').innerHTML = 'Start' 
-        setTimeout (apagaletreiro,tempoinicial)
         
-        delaydeinicio = setTimeout(run,tempoinicial)
+        
+        delaydeinicio = setTimeout(comecar,tempoinicial)
+
+        function comecar(){
+            if (paused == false && exibindoconfig == false){
+                apagaletreiro()
+                run ()
+            }
+        }
 
         function apagaletreiro(){
             document.getElementById('letreiro').style.display='none'
@@ -152,46 +265,28 @@ fazer as configurações
             montaquadro()
             montabotoes() //pronto mas falta configurações e placar
             desenhacobrainteira()
-        }     
-
-        function desenhacobrainteira(){
-            for(let nn=0; nn<tamc; nn++){
-                if(cobra[nn][0]>0 && cobra[nn][0]<=tamx && cobra[nn][1] > 0 && cobra[nn][1] < tamy){
-                    gomo = String(cobra[nn][0]) +'-'+ String(cobra[nn][1])
-                    document.getElementById(gomo).style.backgroundColor= 'white'
-                    document.getElementById(gomo).style.borderRadius='30%'
-                }
-            }
+            document.getElementById('txtnummacas').innerHTML=nummaca
+            document.getElementById('passosdadostxt').innerHTML=passo
         }
-        
+
         function run(){
             passo++
+            document.getElementById('passosdadostxt').innerHTML=passo
             temporizador = setTimeout(run,tempopasso)
             update()
+            erase()
             if (fimdojogo == false){
                 drawgomo()
-                drawmaca()    
+                drawmaca()
             }
-            erase()
-            
-            // document.getElementById('config').innerHTML=''
-            // // document.getElementById('config').innerHTML+='Direção no fim do Run: ' +direcao+ '</br>'
-            // document.getElementById('config').innerHTML+='Aponta atual: ' +apontaatual+'</br>'
-            // document.getElementById('config').innerHTML+='Aponta proximo: ' +apontaproximo+'</br>'
-            // document.getElementById('config').innerHTML+='Passo: no fim no Run '+passo +'</br>'
-            // // document.getElementById('config').innerHTML+='Rabo: '+rabo +'</br>'
-            // document.getElementById('config').innerHTML+='Nova Cobra: ['+cobra[0]+'],['+cobra[1]+'],['+cobra[2]+'],['+cobra[3]+']</br>'
-            // document.getElementById('config').innerHTML+='Tamanho da Cobra Após Update>: '+tamc+'</br>'
-            // document.getElementById('config').innerHTML+='Maçã: '+maca+'</br>'
-            // document.getElementById('config').innerHTML+='Rabo: '+rabo+'</br>'
-
         }
 
         function declaracaodevariaveis(){
+            temporizador = ''
             document.getElementById('letreiro').style.display='none'
             passo=0
-            tamx = 15 //parseInt(document.getElementById('btamx').value)
-            tamy = 10 //parseInt(document.getElementById('btamy').value)
+            // tamx = 15 //parseInt(document.getElementById('btamx').value)
+            // tamy = 10 //parseInt(document.getElementById('btamy').value)
             cobra = [[1,2,1],[2,2,2],[3,2,0]]
             // cobra = [[1,2,1],[2,2,2],[3,2,3],[4,2,4],[5,2,0]]
             direcao = 'direita'
@@ -199,14 +294,23 @@ fazer as configurações
             comeu = false
             apontaatual = cobra[(tamc-2)][2]
             apontaproximo = cobra[(tamc-1)][2]
+            velocidade = Number(document.getElementById('vel').value)
+            temponormal = 1000/velocidade
             tempoinicial = 1000
-            temponormal = 250
             tempoacelerado = temponormal*0.4
             tempopasso = temponormal
             fimdojogo = false
             rabo = rabo = String(cobra[apontaproximo][0]+'-'+cobra[apontaproximo][1])
             gomo = rabo
             paused = false
+            nummaca = 0
+            // exibindoconfig = false
+        }
+
+        function alteravelocidade(){
+            velocidade = Number(document.getElementById('vel').value)
+            tempopasso = 1000/velocidade
+            tempoacelerado = tempopasso*0.4
         }
 
         function tamanhodasareas(){
@@ -214,7 +318,8 @@ fazer as configurações
             indicereduçãoy = 0.9
             larguradajanela = window.innerWidth
             alturadajanela = window.innerHeight
-            
+
+
             // Configura a Área do Cabeçalho
             var larguradocabecalho = larguradajanela*1*indicereduçãox
             var alturadocabecalho = alturadajanela*0.1*indicereduçãoy
@@ -223,10 +328,16 @@ fazer as configurações
             // document.getElementById('cabecalho').style.backgroundColor='blue'
             
             //Configura a Área de Configurações
+            
             var larguradaconfig = larguradajanela*0.3*indicereduçãox
             var alturadaconfig = alturadajanela*0.1*indicereduçãoy
+            if (larguradaconfig/alturadaconfig>3){
+                fontedaconfig = alturadaconfig*0.3
+            }else(fontedaconfig = larguradaconfig*0.3/3)
             document.getElementById('config').style.width=larguradaconfig+'px'
             document.getElementById('config').style.height=alturadaconfig+'px'
+            document.getElementById('botaoconfig').style.fontSize=fontedaconfig+'px'
+            document.getElementById('corpoconfig').style.fontSize=fontedaconfig+'px'
             // document.getElementById('config').style.backgroundColor='red'
 
             //Configura a Área do Título
@@ -254,23 +365,39 @@ fazer as configurações
             document.getElementById('placar').style.top='-'+(alturadaconfig+alturadoplacar)+'px'
             document.getElementById('placar').style.left=(larguradaconfig+larguradotitulo)+'px'
             // document.getElementById('placar').style.backgroundColor='orange'
+            document.getElementById('cronometro').style.width=(larguradoplacar/3)+'px'
+            document.getElementById('cronometro').style.height=(alturadoplacar)+'px'
+            document.getElementById('passosdados').style.width=(larguradoplacar/3)+'px'
+            document.getElementById('passosdados').style.height=(alturadoplacar)+'px'
+            document.getElementById('passosdados').style.position='relative'
+            document.getElementById('passosdados').style.top='-'+alturadoplacar+'px'
+            document.getElementById('passosdados').style.left=larguradoplacar/3+'px'
+            document.getElementById('numerodemacas').style.width=(larguradoplacar/3)+'px'
+            document.getElementById('numerodemacas').style.height=(alturadoplacar)+'px'
+            document.getElementById('numerodemacas').style.position='relative'
+            document.getElementById('numerodemacas').style.left=2*larguradoplacar/3+'px'
+            document.getElementById('numerodemacas').style.top='-'+2*alturadoplacar+'px'
             
+            if (larguradoplacar/alturadoplacar>5){
+                fontedoplacar = alturadoplacar*0.5
+            }else(fontedoplacar = larguradoplacar*0.5/5)
+            if (fontedoplacar>tamfontetitulo*0.6){fontedoplacar=tamfontetitulo*0.6}
+            document.getElementById('cronometro').style.fontSize=fontedoplacar+'px'
+            document.getElementById('passosdados').style.fontSize=fontedoplacar+'px'
+            document.getElementById('numerodemacas').style.fontSize=fontedoplacar+'px'
+                       
 
             //Configura a Área do areaquadro
             larguraareaquadro = larguradajanela*1*indicereduçãox
             alturaareaquadro = alturadajanela*0.6*indicereduçãoy
             document.getElementById('areaquadro').style.width=larguraareaquadro+'px'
             document.getElementById('areaquadro').style.height=alturaareaquadro+'px'
-            // document.getElementById('areaquadro').innerHTML=larguraareaquadro+' - '+alturaareaquadro
             // document.getElementById('areaquadro').style.backgroundColor='yellow'
 
             //Confugura Área do Letreiro
-            // document.getElementById('letreiro').style.width=larguradotitulo+'px'
             document.getElementById('letreiro').style.height=alturadotitulo+'px'
-            // document.getElementById('letreiro').style.position='relative'
-            document.getElementById('letreiro').style.top='-'+alturaareaquadro/2+'px'
+            // document.getElementById('letreiro').style.top='-'+alturaareaquadro/2+'px'
             document.getElementById('letreiro').style.fontSize=alturadotitulo*0.6+'px'
-            // document.getElementById('letreiro').style.marginTop=alturadotitulo+'px'
 
 
             //Configura a Área do Controle
@@ -296,8 +423,9 @@ fazer as configurações
             document.getElementById('acao').style.left=larguradodirecional+'px'
             // document.getElementById('acao').style.backgroundColor='blue'       
         }
-
         function montaquadro(){
+            tamx = parseInt(document.getElementById('btamx').value)
+            tamy = parseInt(document.getElementById('btamy').value)
             var razaowidtamx = Number(larguraareaquadro/tamx)
             var razaoheitamy = Number(alturaareaquadro/tamy)
             if(razaoheitamy<razaowidtamx){menorrazao=razaoheitamy}
@@ -314,49 +442,66 @@ fazer as configurações
             texto+='</table>'
             document.getElementById('quadro').innerHTML=texto
         }
-
         function montabotoes(){
             var indicereduçãox = 0.95
             var indicereduçãoy = 0.9
+            var redbotdirec=0.9
             var larguradajanela = window.innerWidth
             var alturadajanela = window.innerHeight
-            var larguradodirecional = larguradajanela*0.6*indicereduçãox
-            var alturadodirecional = alturadajanela*0.3*indicereduçãoy
-            var redbotdirec=0.8
-            document.getElementById('tabeladirecional').style.position='relative'
-            if (larguradodirecional/alturadodirecional>=2){
-                document.getElementById('botaocima').style.width=(redbotdirec*alturadodirecional*2/3)+'px'
-                document.getElementById('botaocima').style.height=(redbotdirec*alturadodirecional/3)+'px'
-                document.getElementById('botaobaixo').style.width=(redbotdirec*alturadodirecional*2/3)+'px'
-                document.getElementById('botaobaixo').style.height=(redbotdirec*alturadodirecional/3)+'px'
-                document.getElementById('botaodir').style.width=(redbotdirec*alturadodirecional*2/3)+'px'
-                document.getElementById('botaodir').style.height=(redbotdirec*alturadodirecional/3)+'px'
-                document.getElementById('botaoesq').style.width=(redbotdirec*alturadodirecional*2/3)+'px'
-                document.getElementById('botaoesq').style.height=(redbotdirec*alturadodirecional/3)+'px'
-                document.getElementById('tabeladirecional').style.height=alturadodirecional+'px'
-                document.getElementById('tabeladirecional').style.width=(2*alturadodirecional)+'px'
-                deslocdirecionalx=(larguradodirecional/2)-0.5*(2*alturadodirecional)
-                document.getElementById('tabeladirecional').style.left=deslocdirecionalx+'px'
-                tamfontedirec=redbotdirec*alturadodirecional*0.7/3
-            }else{
-                document.getElementById('botaocima').style.width=(redbotdirec*larguradodirecional/3)+'px'
-                document.getElementById('botaocima').style.height=(redbotdirec*larguradodirecional/6)+'px'
-                document.getElementById('botaobaixo').style.width=(redbotdirec*larguradodirecional/3)+'px'
-                document.getElementById('botaobaixo').style.height=(redbotdirec*larguradodirecional/6)+'px'
-                document.getElementById('botaodir').style.width=(redbotdirec*larguradodirecional/3)+'px'
-                document.getElementById('botaodir').style.height=(redbotdirec*larguradodirecional/6)+'px'
-                document.getElementById('botaoesq').style.width=(redbotdirec*larguradodirecional/3)+'px'
-                document.getElementById('botaoesq').style.height=(redbotdirec*larguradodirecional/6)+'px'
-                document.getElementById('tabeladirecional').style.width=larguradodirecional+'px'
-                document.getElementById('tabeladirecional').style.height=(larguradodirecional/2)+'px'
-                deslocdirecionaly=(alturadodirecional/2)-0.5*(larguradodirecional/2)
-                document.getElementById('tabeladirecional').style.top=deslocdirecionaly+'px'
-                tamfontedirec=redbotdirec*larguradodirecional*0.7/6
-            }
-            document.getElementById('botaocima').style.fontSize=tamfontedirec+'px'
-            document.getElementById('botaodir').style.fontSize=tamfontedirec+'px'
-            document.getElementById('botaobaixo').style.fontSize=tamfontedirec+'px'
-            document.getElementById('botaoesq').style.fontSize=tamfontedirec+'px'
+            var larguradivdirecional= larguradajanela*0.6*indicereduçãox/3
+            var alturadivdirecional= alturadajanela*0.3*indicereduçãoy/3
+            var larguradobotaodirecional = larguradivdirecional*indicereduçãox
+            var alturadobotaodirecional = alturadivdirecional*indicereduçãoy
+            document.getElementById('divbotaocima').style.width=larguradivdirecional+'px'
+            document.getElementById('divbotaocima').style.height=alturadivdirecional+'px'
+            document.getElementById('divbotaocima').style.position='relative'
+            document.getElementById('divbotaocima').style.left=larguradivdirecional+'px'
+            document.getElementById('botaocima').style.width=(larguradobotaodirecional*redbotdirec)*alturadajanela/larguradajanela+'px'
+            document.getElementById('botaocima').style.height=(alturadobotaodirecional*redbotdirec)+'px'
+            document.getElementById('botaocima').style.position='relative'
+            document.getElementById('botaocima').style.top='50%'
+            document.getElementById('botaocima').style.left='50%'
+            document.getElementById('botaocima').style.transform='translate(-50%,-50%)'
+            document.getElementById('divbotaoesq').style.width=larguradivdirecional+'px'
+            document.getElementById('divbotaoesq').style.height=alturadivdirecional+'px'
+            document.getElementById('divbotaoesq').style.position='relative'
+            document.getElementById('divbotaoesq').style.left=0+'px'
+            document.getElementById('divbotaoesq').style.top=0+'px'
+            document.getElementById('botaoesq').style.width=(larguradobotaodirecional*redbotdirec)*alturadajanela/larguradajanela+'px'
+            document.getElementById('botaoesq').style.height=(alturadobotaodirecional*redbotdirec)+'px'
+            document.getElementById('botaoesq').style.position='relative'
+            document.getElementById('botaoesq').style.top='50%'
+            document.getElementById('botaoesq').style.left='50%'
+            document.getElementById('botaoesq').style.transform='translate(-50%,-50%)'
+            document.getElementById('divbotaodir').style.width=larguradivdirecional+'px'
+            document.getElementById('divbotaodir').style.height=alturadivdirecional+'px'
+            document.getElementById('divbotaodir').style.position='relative'
+            document.getElementById('divbotaodir').style.left=2*larguradivdirecional+'px'
+            document.getElementById('divbotaodir').style.top=-alturadivdirecional+'px'
+            document.getElementById('botaodir').style.width=(larguradobotaodirecional*redbotdirec)*alturadajanela/larguradajanela+'px'
+            document.getElementById('botaodir').style.height=(alturadobotaodirecional*redbotdirec)+'px'
+            document.getElementById('botaodir').style.position='relative'
+            document.getElementById('botaodir').style.top='50%'
+            document.getElementById('botaodir').style.left='50%'
+            document.getElementById('botaodir').style.transform='translate(-50%,-50%)'
+            document.getElementById('divbotaobaixo').style.width=larguradivdirecional+'px'
+            document.getElementById('divbotaobaixo').style.height=alturadivdirecional+'px'
+            document.getElementById('divbotaobaixo').style.position='relative'
+            document.getElementById('divbotaobaixo').style.left=larguradivdirecional+'px'
+            document.getElementById('divbotaobaixo').style.top='-'+alturadivdirecional+'px'
+            document.getElementById('botaobaixo').style.width=(larguradobotaodirecional*redbotdirec)*alturadajanela/larguradajanela+'px'
+            document.getElementById('botaobaixo').style.height=(alturadobotaodirecional*redbotdirec)+'px'
+            document.getElementById('botaobaixo').style.position='relative'
+            document.getElementById('botaobaixo').style.top='50%'
+            document.getElementById('botaobaixo').style.left='50%'
+            document.getElementById('botaobaixo').style.transform='translate(-50%,-50%)'
+            
+            if(alturadobotaodirecional < larguradobotaodirecional){fontedirecional = alturadobotaodirecional}
+            else{fontedirecional = larguradobotaodirecional}
+            document.getElementById('botaocima').style.fontSize=fontedirecional*0.7+'px'
+            document.getElementById('botaoesq').style.fontSize=fontedirecional*0.7+'px'
+            document.getElementById('botaodir').style.fontSize=fontedirecional*0.7+'px'
+            document.getElementById('botaobaixo').style.fontSize=fontedirecional*0.7+'px'
 
             var larguradaacao = larguradajanela*0.4*indicereduçãox
             var alturadaacao = alturadajanela*0.3*indicereduçãoy
@@ -364,21 +509,39 @@ fazer as configurações
             document.getElementById('botaorestart').style.width=(larguradaacao*redbotacao*0.8)+'px'
             document.getElementById('botaopause').style.width=(larguradaacao*redbotacao*0.8)+'px'
             document.getElementById('botaoacelera').style.width=(larguradaacao*redbotacao*0.8)+'px'
-            document.getElementById('botaorestart').style.height=(alturadodirecional*redbotacao*0.25)+'px'
+            document.getElementById('botaorestart').style.height=(alturadaacao*redbotacao*0.25)+'px'
             document.getElementById('botaopause').style.height=(alturadaacao*redbotacao*0.25)+'px'
             document.getElementById('botaoacelera').style.height=(alturadaacao*redbotacao*0.4)+'px'
             document.getElementById('botaoacelera').style.marginTop=(alturadaacao*redbotacao*0.1)+'px'
             document.getElementById('tabelaacao').style.margin='auto'
-            document.getElementById('botaorestart').style.fontSize=(alturadodirecional*redbotacao*0.25*0.45)+'px'
+            document.getElementById('botaorestart').style.fontSize=(alturadaacao*redbotacao*0.25*0.45)+'px'
             document.getElementById('botaopause').style.fontSize=(alturadaacao*redbotacao*0.25*0.45)+'px'
             document.getElementById('botaoacelera').style.fontSize=(alturadaacao*redbotacao*0.25*0.45)+'px'
+            document.getElementById('botaoconfig').style.position='relative'
+            document.getElementById('botaoconfig').style.top='50%'
+            document.getElementById('botaoconfig').style.left='50%'
+            document.getElementById('botaoconfig').style.transform='translate(-50%,-50%)'
+            document.getElementById('botaoconfig').style.width=larguradajanela*0.3*indicereduçãox*0.8+'px'
+            document.getElementById('botaoconfig').style.height=alturadajanela*0.1*indicereduçãoy*0.7+'px'
+        }
+        
+        function desenhacobrainteira(){
+            for(let nn=0; nn<tamc; nn++){
+                if(cobra[nn][0]>0 && cobra[nn][0]<=tamx && cobra[nn][1] > 0 && cobra[nn][1] < tamy){
+                    gomo = String(cobra[nn][0]) +'-'+ String(cobra[nn][1])
+                    document.getElementById(gomo).style.backgroundColor= 'white'
+                    document.getElementById(gomo).style.borderRadius='30%'
+                }
+            }
         }
 
         function update(){
             updatecobra()
-            document.getElementById('config').innerHTML=''
+            // document.getElementById('config').innerHTML=''
             //Verifica se comeu a maçã
             if (String(cobra[apontaatual][0]) == String(maca[0]) && String(cobra[apontaatual][1]) == String(maca[1])) {
+                nummaca ++
+                document.getElementById('txtnummacas').innerHTML=nummaca
                 updatemaca()
                 aumentacobra()
             }
@@ -397,7 +560,6 @@ fazer as configurações
                 gameover()      
             }
         }
-
         function updatecobra(){
             tamc=cobra.length
             rabo = String(cobra[apontaproximo][0]+'-'+cobra[apontaproximo][1])
@@ -411,7 +573,6 @@ fazer as configurações
             apontaatual = cobra[apontaatual][2]
 
         }
-
         function updatemaca(){
             maca = [parseInt(1+(tamx*Math.random())),parseInt(1+(tamy*Math.random()))]
             var mudadenovo = true
@@ -426,7 +587,6 @@ fazer as configurações
             }
             vermelho = String(maca[0]) +'-'+ String(maca[1])
         }
-
         function aumentacobra(){
             cobra[tamc] = [cobra[apontaproximo][0],cobra[apontaproximo][1]]
             cobra[tamc][2]=cobra[apontaatual][2]
@@ -442,8 +602,7 @@ fazer as configurações
         function drawgomo(){
             document.getElementById(gomo).style.backgroundColor= 'white'
             document.getElementById(gomo).style.borderRadius='30%'
-        }
-        
+        }        
         function erase(){
             document.getElementById(rabo).style.backgroundColor= 'black'
             document.getElementById(rabo).style.borderRadius='20%'
@@ -451,7 +610,6 @@ fazer as configurações
         }
 
         function gameover(){
-            document.getElementById('placar').innerHTML='BATEU!'
             clearTimeout(temporizador)
             fimdojogo = true
             document.getElementById('textodoletreiro').innerHTML='Game Over'
@@ -464,16 +622,42 @@ fazer as configurações
 
             declaracaodevariaveis()
             init()
-        
+            
             updatemaca()
-            document.getElementById(vermelho).style.backgroundColor= 'red'
-        
+            drawmaca()
+
             document.getElementById('letreiro').style.display = 'block'
             document.getElementById('textodoletreiro').innerHTML = 'Start' 
-            setTimeout (apagaletreiro,tempoinicial)
-        
-            delaydeinicio = setTimeout(run,tempoinicial)
+            
+            
+            delaydeinicio = setTimeout(comecar,tempoinicial)
+            
+        }
 
+        function pause(){
+            if (fimdojogo == false){
+                if (paused == false){
+                    paused = true
+                    document.getElementById('textodoletreiro').innerHTML='Paused'
+                    document.getElementById('letreiro').style.display='block'
+                    clearTimeout(temporizador)
+                
+                } else {
+                    if (exibindoconfig == false){
+                        clearTimeout(temporizador)
+                        paused = false
+                        document.getElementById('letreiro').style.display='none'
+                        clearTimeout(temporizador)
+                        setTimeout(run,tempopasso)
+                    }
+                }
+            }
+        }   
+        function acelera(){
+            tempopasso = tempoacelerado
+        }
+        function frea(){
+            tempopasso = temponormal
         }
 
         function pegadirecao(botaoapertado){
@@ -483,8 +667,7 @@ fazer as configurações
                 (estavaindopara == 'direita' && botaoapertado == 'esquerda')){}
             else{direcao=botaoapertado}
         }
-
-        function pegadirteclado(codigotecla){
+        function acaoteclado(codigotecla){
             // alert(codigodatecla)
             if ((codigotecla == 37 || codigotecla == 65) && (estavaindopara != 'direita')&&(estavaindopara != 'esquerda')) {direcao = 'esquerda'}
             if ((codigotecla == 38 || codigotecla == 87) && (estavaindopara != 'baixo')&&(estavaindopara != 'cima')) {direcao = 'cima'}
@@ -500,30 +683,26 @@ fazer as configurações
             //     epraacelerar=true
             //     primeiropassoac = true
             // }
+            if (codigotecla == 32){acelera()}
+        }
+        function freaespaco(codtec){
+            if (codtec == 32){frea()}
         }
 
-        function pause(){
-            if (fimdojogo == false){
-                if (paused == false){
-                    paused = true
-                    document.getElementById('textodoletreiro').innerHTML='Paused'
-                    document.getElementById('letreiro').style.display='block'
-                    clearTimeout(temporizador)
-                
-                } else {
-                    paused = false
-                    document.getElementById('letreiro').style.display='none'
-                    setTimeout(run,tempopasso)
-                }
+        function fecharconfig(){
+            document.getElementById('teladeconfiguracoes').style.display='none'
+            exibindoconfig = false
+            if (paused == false){
+                delaydeinicio = setTimeout(comecar,tempoinicial)
             }
         }
-    
-        function acelera(){
-            tempopasso = tempoacelerado
-        }
-
-        function frea(){
-            tempopasso = temponormal
+        function configurar(){
+            paused = true
+            document.getElementById('textodoletreiro').innerHTML='Paused'
+            document.getElementById('letreiro').style.display='block'
+            clearTimeout(temporizador)
+            document.getElementById('teladeconfiguracoes').style.display='block'
+            exibindoconfig = true    
         }
 
 </script>
